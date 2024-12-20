@@ -10,11 +10,14 @@ from .redcap_connection import (
     error_message,
 )
 
-NACC_TECH_ROLE = 'NACC-TECH-ROLE'
-NACC_STAFF_ROLE = 'NACC-STAFF-ROLE'
-CENTER_USER_ROLE = 'CENTER-USER-ROLE'
-
 log = logging.getLogger()
+
+
+class REDCapRoles:
+    """Data class for storing REDCap roles."""
+    NACC_TECH_ROLE = 'NACC-TECH-ROLE'
+    NACC_STAFF_ROLE = 'NACC-STAFF-ROLE'
+    CENTER_USER_ROLE = 'CENTER-USER-ROLE'
 
 
 def get_nacc_developer_permissions(
@@ -243,7 +246,7 @@ class REDCapProject:
         """
 
         if not self.assign_update_user_role_by_label(gearbot_user_id,
-                                                     NACC_TECH_ROLE):
+                                                     REDCapRoles.NACC_TECH_ROLE):
             forms = self.export_instruments()
             gearbot_user = get_nacc_developer_permissions(
                 username=gearbot_user_id, forms_list=forms)
