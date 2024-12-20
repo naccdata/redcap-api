@@ -1,2 +1,3 @@
-# redcap-api
-Library for interacting with the REDCap API
+# NACC REDCap API
+
+Library for interacting with the REDCap API.
