@@ -6,6 +6,8 @@ from typing import Any, Dict, List, Optional
 import requests  # type: ignore
 from requests import Response
 
+from redcap_api.redcap_parameter_store import REDCapParameters, REDCapReportParameters
+
 
 class REDCapSuperUserConnection:
     """REDCap connection using super API token.
@@ -30,7 +32,8 @@ class REDCapSuperUserConnection:
         return self.__url
 
     @classmethod
-    def create_from(cls, parameters: Any) -> 'REDCapSuperUserConnection':
+    def create_from(
+            cls, parameters: REDCapParameters) -> 'REDCapSuperUserConnection':
         """Creates a REDCap connection with given parameters.
 
         Args:
@@ -105,11 +108,11 @@ class REDCapConnection:
         self.__url = url
 
     @classmethod
-    def create_from(cls, parameters: Any) -> 'REDCapConnection':
+    def create_from(cls, parameters: REDCapParameters) -> 'REDCapConnection':
         """Creates a REDCap connection with given parameters.
 
         Args:
-          parameters: REDCapParameters object with token and url
+          parameters: REDCap parameters object with token and url
 
         Returns:
           the connection using the parameters
@@ -226,8 +229,8 @@ class REDCapReportConnection(REDCapConnection):
 
     @classmethod
     def create_from(
-            cls,
-            parameters: Any  # type: ignore[override]
+        cls,
+        parameters: REDCapReportParameters  # type: ignore[override]
     ) -> 'REDCapReportConnection':
         """Creates a REDCap connection with report parameters.
 

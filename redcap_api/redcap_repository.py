@@ -5,6 +5,7 @@ from redcap_api.redcap_connection import (
     REDCapConnection,
     REDCapConnectionError,
 )
+from redcap_api.redcap_parameter_store import REDCapParameters
 from redcap_api.redcap_project import REDCapProject
 
 log = logging.getLogger(__name__)
@@ -13,11 +14,12 @@ log = logging.getLogger(__name__)
 class REDCapParametersRepository:
     """Repository for REDCap connection credentials."""
 
-    def __init__(self, redcap_params: Optional[Dict[str, Any]] = None):
+    def __init__(self,
+                 redcap_params: Optional[Dict[str, REDCapParameters]] = None):
         self.__redcap_params = redcap_params if redcap_params else {}
 
     @property
-    def redcap_params(self) -> Dict[str, Any]:
+    def redcap_params(self) -> Dict[str, REDCapParameters]:
         return self.__redcap_params
 
     @classmethod
@@ -44,7 +46,7 @@ class REDCapParametersRepository:
 
         return REDCapParametersRepository(redcap_params)
 
-    def add_project_parameter(self, pid: int, parameters: Any):
+    def add_project_parameter(self, pid: int, parameters: REDCapParameters):
         """Add REDCap parameters to the repository.
 
         Args:
@@ -53,7 +55,7 @@ class REDCapParametersRepository:
         """
         self.redcap_params[f'pid_{pid}'] = parameters
 
-    def get_project_parameters(self, pid: int) -> Optional[Any]:
+    def get_project_parameters(self, pid: int) -> Optional[REDCapParameters]:
         """Retrieve REDCap parameters for the given project.
 
         Args:
