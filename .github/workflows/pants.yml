@@ -1,7 +1,7 @@
 # Based on
 # https://github.com/pantsbuild/example-python/blob/main/.github/workflows/pants.yaml
 
-name: Pants Lint and Test
+name: Pants Lint
 
 on:
   push:
