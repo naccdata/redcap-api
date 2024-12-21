@@ -3,9 +3,8 @@ import json
 from json import JSONDecodeError
 from typing import Any, Dict, List, Optional
 
-import requests
+import requests  # type: ignore
 from requests import Response
-from typing_extensions import TypedDict
 
 
 class REDCapSuperUserConnection:
@@ -31,7 +30,7 @@ class REDCapSuperUserConnection:
         return self.__url
 
     @classmethod
-    def create_from(cls, parameters: TypedDict) -> 'REDCapSuperUserConnection':
+    def create_from(cls, parameters: Any) -> 'REDCapSuperUserConnection':
         """Creates a REDCap connection with given parameters.
 
         Args:
@@ -106,7 +105,7 @@ class REDCapConnection:
         self.__url = url
 
     @classmethod
-    def create_from(cls, parameters: TypedDict) -> 'REDCapConnection':
+    def create_from(cls, parameters: Any) -> 'REDCapConnection':
         """Creates a REDCap connection with given parameters.
 
         Args:
@@ -227,8 +226,8 @@ class REDCapReportConnection(REDCapConnection):
 
     @classmethod
     def create_from(
-        cls,
-        parameters: TypedDict  # type: ignore[override]
+            cls,
+            parameters: Any  # type: ignore[override]
     ) -> 'REDCapReportConnection':
         """Creates a REDCap connection with report parameters.
 
