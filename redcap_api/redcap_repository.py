@@ -1,5 +1,6 @@
 import logging
 from typing import Any, Dict, Optional
+
 from typing_extensions import TypedDict
 
 from redcap_api.redcap_connection import (
@@ -14,8 +15,7 @@ log = logging.getLogger(__name__)
 class REDCapParametersRepository:
     """Repository for REDCap connection credentials."""
 
-    def __init__(self,
-                 redcap_params: Optional[Dict[str, TypedDict]] = None):
+    def __init__(self, redcap_params: Optional[Dict[str, TypedDict]] = None):
         self.__redcap_params = redcap_params if redcap_params else {}
 
     @property

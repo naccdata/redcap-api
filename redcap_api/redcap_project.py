@@ -245,8 +245,8 @@ class REDCapProject:
             REDCapConnectionError if the response has an error.
         """
 
-        if not self.assign_update_user_role_by_label(gearbot_user_id,
-                                                     REDCapRoles.NACC_TECH_ROLE):
+        if not self.assign_update_user_role_by_label(
+                gearbot_user_id, REDCapRoles.NACC_TECH_ROLE):
             forms = self.export_instruments()
             gearbot_user = get_nacc_developer_permissions(
                 username=gearbot_user_id, forms_list=forms)

@@ -2,10 +2,10 @@
 import json
 from json import JSONDecodeError
 from typing import Any, Dict, List, Optional
-from typing_extensions import TypedDict
 
 import requests
 from requests import Response
+from typing_extensions import TypedDict
 
 
 class REDCapSuperUserConnection:
@@ -31,8 +31,7 @@ class REDCapSuperUserConnection:
         return self.__url
 
     @classmethod
-    def create_from(
-            cls, parameters: TypedDict) -> 'REDCapSuperUserConnection':
+    def create_from(cls, parameters: TypedDict) -> 'REDCapSuperUserConnection':
         """Creates a REDCap connection with given parameters.
 
         Args:
