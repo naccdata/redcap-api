@@ -1,12 +1,12 @@
 import logging
 from typing import Any, Dict, Optional
+from typing_extensions import TypedDict
 
-from .redcap_connection import (
+from redcap_api.redcap_connection import (
     REDCapConnection,
     REDCapConnectionError,
-    REDCapParameters,
 )
-from .redcap_project import REDCapProject
+from redcap_api.redcap_project import REDCapProject
 
 log = logging.getLogger(__name__)
 
@@ -15,11 +15,11 @@ class REDCapParametersRepository:
     """Repository for REDCap connection credentials."""
 
     def __init__(self,
-                 redcap_params: Optional[Dict[str, REDCapParameters]] = None):
+                 redcap_params: Optional[Dict[str, TypedDict]] = None):
         self.__redcap_params = redcap_params if redcap_params else {}
 
     @property
-    def redcap_params(self) -> Dict[str, REDCapParameters]:
+    def redcap_params(self) -> Dict[str, TypedDict]:
         return self.__redcap_params
 
     @classmethod
@@ -46,7 +46,7 @@ class REDCapParametersRepository:
 
         return REDCapParametersRepository(redcap_params)
 
-    def add_project_parameter(self, pid: int, parameters: REDCapParameters):
+    def add_project_parameter(self, pid: int, parameters: TypedDict):
         """Add REDCap parameters to the repository.
 
         Args:
@@ -55,7 +55,7 @@ class REDCapParametersRepository:
         """
         self.redcap_params[f'pid_{pid}'] = parameters
 
-    def get_project_parameters(self, pid: int) -> Optional[REDCapParameters]:
+    def get_project_parameters(self, pid: int) -> Optional[TypedDict]:
         """Retrieve REDCap parameters for the given project.
 
         Args:

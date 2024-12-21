@@ -4,7 +4,7 @@ import logging
 from json import JSONDecodeError
 from typing import Any, Dict, List, Optional
 
-from .redcap_connection import (
+from redcap_api.redcap_connection import (
     REDCapConnection,
     REDCapConnectionError,
     error_message,
