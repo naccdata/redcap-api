@@ -1,50 +1,10 @@
 """Module to handle downloading error check CSVs from S3."""
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict, List, TextIO
 
 from .utils import ErrorCheckKey
 
 log = logging.getLogger(__name__)
-
-
-def read_csv(input_file: TextIO,
-             svisitor: ErrorCheckCSVVisitor,
-             delimiter: str = ',') -> bool:
-    """Reads CSV file and applies visitor to each row.
-
-    Args:
-      input_file: the input stream for the CSV file
-      visitor: the visitor
-      delimiter: Expected delimiter for the CSV
-    Returns:
-      True if the input file was processed without error, False otherwise
-    """
-    csv_sample = input_file.read(1024)
-    if not csv_sample:
-        log.error("CSV file is empty")
-        return False
-
-    input_file.seek(0)
-
-    reader = DictReader(input_file, delimiter=delimiter)
-    if not reader.fieldnames:
-        log.error("CSV has no headers")
-        return False
-
-    # visitor should handle errors for invalid headers/rows
-    success = visitor.visit_header(list(reader.fieldnames))
-    if not success:
-        return False
-
-    try:
-        for record in reader:
-            row_success = visitor.visit_row(record, line_num=reader.line_num)
-            success = row_success and success
-    except Error as error:
-        error_writer.write(malformed_file_error(str(error)))
-        return False
-
-    return success
 
 
 class ErrorCheckCSVVisitor:
@@ -155,3 +115,43 @@ class ErrorCheckCSVVisitor:
             self.__validated_error_checks.append(upload_row)
 
         return valid
+
+
+def read_csv(input_file: TextIO,
+             svisitor: ErrorCheckCSVVisitor,
+             delimiter: str = ',') -> bool:
+    """Reads CSV file and applies visitor to each row.
+
+    Args:
+      input_file: the input stream for the CSV file
+      visitor: the visitor
+      delimiter: Expected delimiter for the CSV
+    Returns:
+      True if the input file was processed without error, False otherwise
+    """
+    csv_sample = input_file.read(1024)
+    if not csv_sample:
+        log.error("CSV file is empty")
+        return False
+
+    input_file.seek(0)
+
+    reader = DictReader(input_file, delimiter=delimiter)
+    if not reader.fieldnames:
+        log.error("CSV has no headers")
+        return False
+
+    # visitor should handle errors for invalid headers/rows
+    success = visitor.visit_header(list(reader.fieldnames))
+    if not success:
+        return False
+
+    try:
+        for record in reader:
+            row_success = visitor.visit_row(record, line_num=reader.line_num)
+            success = row_success and success
+    except Error as error:
+        error_writer.write(malformed_file_error(str(error)))
+        return False
+
+    return success

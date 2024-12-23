@@ -46,17 +46,17 @@ pants test ::
 To package the main `redcap_api` distribution with pants, run: 
 
 ```bash
-pants package redcap_api::
+pants package common/redcap_api ::
 ```
 
-To package any of the internal tool distributions, run:
+To package one of the internal tool distributions, run:
 
 ```bash
-pants package tools/<tool-name>::
+pants package tools/<name-of-tool> ::
 # for example
-# pants package tools/redcap_error_checks_import::
+# pants package tools/redcap_error_checks_import ::
 ```
 
-will then build sdist and wheel distributions in the `dist` directory.
+The above will build sdist and wheel distributions in the `dist` directory.
 
 > The version number on the distribution files is set in the `redcap_api/BUILD` file.

@@ -77,9 +77,11 @@ class REDCapErrorChecksImporter:
         """Build the full S3 path as a string from the error check key."""
         return f's3://{self.__bucket}/{key.full_path}'
 
-    def load_error_check_csv(self,
+    @classmethod
+    def load_error_check_csv(cls,
                              key: ErrorCheckKey,
-                             file: Dict[Any, Any]) -> Optional[List[Dict[str, Any]]]:
+                             file: Dict[Any, Any],
+                             stats: ErrorCheckImportStats) -> Optional[List[Dict[str, Any]]]:
         """Load the error check CSV.
 
         Args:
@@ -102,7 +104,7 @@ class REDCapErrorChecksImporter:
             return None
 
         # check for duplicates
-        duplicates = self.__stats.add_error_codes([x['error_code'] for x in error_checks])
+        duplicates = stats.add_error_codes([x['error_code'] for x in error_checks])
         if duplicates:
             log.error(
                 f"Found duplicated errors, will not import file: {duplicates}")
@@ -150,7 +152,7 @@ class REDCapErrorChecksImporter:
             # Load from files from S3
             full_path = self.build_full_path(error_key)
             log.info(f"Loading error checks from {full_path}")
-            error_checks = self.load_error_check_csv(error_key, file)
+            error_checks = self.load_error_check_csv(error_key, file, stats)
 
             if not error_checks:
                 if self.__fail_fast:

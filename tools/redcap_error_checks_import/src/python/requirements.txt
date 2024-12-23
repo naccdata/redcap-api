@@ -1,3 +1,0 @@
-pydantic>=2.5.2
-boto3>=1.28.53
-redcap_api@ file:///Users/echeng/Desktop/work/src/redcap-api/dist/redcap_api-0.1.0-py3-none-any.whl

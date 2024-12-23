@@ -16,7 +16,7 @@ pants_ignore = [
 ]
 
 [source]
-root_patterns = ["/"]
+root_patterns = ["src/python", "test/python"]
 
 [python]
 interpreter_constraints = ["==3.11.*"]

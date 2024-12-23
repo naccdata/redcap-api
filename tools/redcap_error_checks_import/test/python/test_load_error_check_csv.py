@@ -2,9 +2,9 @@
 from io import BytesIO
 
 import pytest
-from redcap_error_checks_import_app.main import load_error_check_csv
-from redcap_error_checks_import_app.utils import ErrorCheckImportStats, ErrorCheckKey
-from redcap_error_checks_import_app.visitor import ErrorCheckCSVVisitor
+from redcap_error_checks_import import REDCapErrorChecksImporter
+from redcap_error_checks_import.utils.utils import ErrorCheckImportStats, ErrorCheckKey
+from redcap_error_checks_import.utils.visitor import ErrorCheckCSVVisitor
 
 
 @pytest.fixture(scope='function')
