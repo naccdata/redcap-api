@@ -1,8 +1,8 @@
-python_sources(name="lib")
+python_sources(name="redcap_api")
 
 python_distribution(
     name="dist",
-    dependencies=[":lib"],
+    dependencies=[":redcap_api"],
     wheel=True,
     sdist=True,
     provides=python_artifact(

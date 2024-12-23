@@ -2,6 +2,8 @@
 
 Library for interacting with the REDCap API.
 
+The core library is under `redcap_api`. Additional internal tools that utilize it are under `tools`.
+
 ### Installing Pants
 
 This repository uses [pants](pantsbuild.org) for developing and building the distributions.
@@ -41,10 +43,18 @@ pants test ::
 
 ### Building a Distribution
 
-To package the distribution with pants, run: 
+To package the main `redcap_api` distribution with pants, run: 
 
 ```bash
-pants package ::
+pants package redcap_api::
+```
+
+To package any of the internal tool distributions, run:
+
+```bash
+pants package tools/<tool-name>::
+# for example
+# pants package tools/redcap_error_checks_import::
 ```
 
 will then build sdist and wheel distributions in the `dist` directory.
