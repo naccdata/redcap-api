@@ -1,7 +1,4 @@
 """Tests the ErrorCheckCSVVisitor and related models."""
-import json
-import logging
-
 import pytest
 from redcap_error_checks_import.utils.utils import ErrorCheckKey
 from redcap_error_checks_import.utils.visitor import ErrorCheckCSVVisitor

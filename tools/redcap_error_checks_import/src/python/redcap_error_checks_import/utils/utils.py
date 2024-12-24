@@ -1,7 +1,6 @@
 """Defines model/util classes specifically used for importing error checks into
 REDCap."""
-import boto3
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 from pydantic import BaseModel
 

@@ -5,7 +5,7 @@ import logging
 from io import StringIO
 from typing import Any, Dict, List, Optional
 
-from pydantic import TypeAdapter, ValidationError
+from pydantic import TypeAdapter
 from redcap_api.redcap_connection import (
     REDCapConnection,
     REDCapConnectionError,
@@ -53,7 +53,6 @@ class REDCapErrorChecksImporter:
         self.__s3 = session.client('s3')
 
         # build redcap project from parameter store
-        ssm = session.client('ssm')
         raw_parameters = session.client('ssm').\
             get_parameters_by_path(Path=redcap_project_path,
                                    WithDecryption=True,
@@ -83,10 +82,12 @@ class REDCapErrorChecksImporter:
         return f's3://{self.__bucket}/{key.full_path}'
 
     @classmethod
-    def load_error_check_csv(cls,
-                             key: ErrorCheckKey,
-                             file: Dict[Any, Any],
-                             stats: ErrorCheckImportStats) -> Optional[List[Dict[str, Any]]]:
+    def load_error_check_csv(
+        cls,
+        key: ErrorCheckKey,
+        file: Dict[Any, Any],
+        stats: ErrorCheckImportStats
+    ) -> Optional[List[Dict[str, Any]]]:
         """Load the error check CSV.
 
         Args:
@@ -177,4 +178,5 @@ class REDCapErrorChecksImporter:
         if not self.__stats.all_error_codes:
             log.warning("No error codes read")
         else:
-            log.info(f"Import complete! Imported {self.__stats.total_records} total records")
+            log.info(f"Import complete! Imported {self.__stats.total_records} "
+                     + "total records")

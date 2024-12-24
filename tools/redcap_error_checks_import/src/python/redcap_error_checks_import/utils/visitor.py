@@ -1,6 +1,6 @@
 """Module to handle downloading error check CSVs from S3."""
 import logging
-from csv import DictReader
+from csv import DictReader, Error
 from typing import Any, Dict, List, TextIO
 
 from .utils import ErrorCheckKey
@@ -87,24 +87,24 @@ class ErrorCheckCSVVisitor:
 
         form_name = row.get('form_name', '')
         if form_name != self.__key.form_name:
-            valid = self.log_row_error(line_num, field, 
+            valid = self.log_row_error(line_num, field,
                 f'does not match expected form name {self.__key.form_name}')
 
         error_code = row.get('error_code', '')
         if not error_code.startswith(self.__key.form_name):
-            valid = self.log_row_error(line_num, field, 
+            valid = self.log_row_error(line_num, field,
                 f'does not start with expected form name {self.__key.form_name}')
 
         # check packet is consistent
         if self.__key.packet:
             visit_type = self.__key.get_visit_type()
             if visit_type and visit_type not in error_code:
-                valid = self.log_row_error(line_num, field, 
+                valid = self.log_row_error(line_num, field,
                     f'does not have expected visit type {visit_type}')
 
             packet = row.get('packet', '')
             if packet != self.__key.packet:
-                valid = self.log_row_error(line_num, field, 
+                valid = self.log_row_error(line_num, field,
                     f'does not match expected packet {self.__key.packet}')
 
         # only import items in REQUIRED_HEADERS if valid
@@ -152,7 +152,7 @@ def read_csv(input_file: TextIO,
             row_success = visitor.visit_row(record, line_num=reader.line_num)
             success = row_success and success
     except Error as error:
-        error_writer.write(malformed_file_error(str(error)))
+        log.error(f"Encountered error reading CSV: {error}")
         return False
 
     return success
