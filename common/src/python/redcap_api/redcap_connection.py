@@ -4,6 +4,7 @@ from json import JSONDecodeError
 from typing import Any, Dict, List, Optional
 
 import requests  # type: ignore
+from ratelimit import limits, sleep_and_retry
 from requests import Response
 
 from redcap_api.redcap_parameter_store import REDCapParameters, REDCapReportParameters
@@ -120,6 +121,8 @@ class REDCapConnection:
         return REDCapConnection(token=parameters['token'],
                                 url=parameters['url'])
 
+    @sleep_and_retry
+    @limits(calls=20, period=1)
     def post_request(self,
                      *,
                      data: Dict[str, str],
@@ -147,6 +150,8 @@ class REDCapConnection:
 
         return response
 
+    @sleep_and_retry
+    @limits(calls=20, period=1)
     def request_json_value(self, *, data: Dict[str, str], message: str) -> Any:
         """Posts a request to the REDCap project with the given data object
         expecting a JSON value.
@@ -166,6 +171,8 @@ class REDCapConnection:
         except JSONDecodeError as error:
             raise REDCapConnectionError(message=message) from error
 
+    @sleep_and_retry
+    @limits(calls=20, period=1)
     def request_text_value(self,
                            *,
                            data: Dict[str, str],

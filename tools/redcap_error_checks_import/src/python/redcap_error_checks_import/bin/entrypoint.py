@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from redcap_error_checks_import import REDCapErrorChecksImporter
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
 
@@ -23,7 +23,7 @@ def entrypoint():
                         default='nacc-qc-rules',
                         help='The S3 URI containing the error check CSVs; defaults to the NACC QC Rules bucket')
     parser.add_argument('-r', '--redcap-project-path', dest="redcap_project_path", type=str, required=False,
-                        default='/redcap/aws/qcchecks',
+                        default='/redcap/aws/qcchecks/',
                         help='AWS parameter base path for the target REDCap project to import error checks to; '
                              + 'defaults to the NACC QC Checks project')
 
@@ -39,15 +39,16 @@ def entrypoint():
     args = parser.parse_args()
 
     log.info("Arguments:")
-    log.info(f"aws_profile:\t{args.aws_profile}")
-    log.info(f"s3_bucket:\t{args.s3_bucket}")
+    log.info(f"aws_profile:\t\t{args.aws_profile}")
+    log.info(f"s3_bucket:\t\t{args.s3_bucket}")
     log.info(f"redcap_project_path:\t{args.redcap_project_path}")
-    log.info(f"modules:\t{args.modules}")
-    log.info(f"fail_fast:\t{args.fail_fast}")
-    log.info(f"dry_run:\t{args.dry_run}")
+    log.info(f"modules:\t\t\t{args.modules}")
+    log.info(f"fail_fast:\t\t{args.fail_fast}")
+    log.info(f"dry_run:\t\t\t{args.dry_run}")
 
     s3_bucket = args.s3_bucket.replace('s3://', '').rstrip('/')
-    redcap_project_path = args.redcap_project_path.rstrip('/')
+    redcap_project_path = args.redcap_project_path if args.redcap_project_path.endswith('/') \
+        else f'{args.redcap_project_path}/'
     modules = [x.strip() for x in args.modules.split(',')]
 
     importer = REDCapErrorChecksImporter(aws_profile=args.aws_profile,

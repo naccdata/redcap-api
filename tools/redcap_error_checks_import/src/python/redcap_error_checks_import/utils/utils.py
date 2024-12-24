@@ -106,7 +106,7 @@ class ErrorCheckImportStats:
 
     @property
     def all_error_codes(self) -> List[str]:
-        """Returns the list of failed files."""
+        """Returns the list of error codes."""
         return self.__all_error_codes
 
     @property

@@ -1,4 +1,5 @@
 """Defines REDCap Import Error Checks."""
+import boto3
 import json
 import logging
 from io import StringIO
@@ -49,24 +50,28 @@ class REDCapErrorChecksImporter:
 
         # get S3 bucket
         self.__bucket = s3_bucket
-        self.__s3 = session.resource('s3').Bucket(s3_bucket)
+        self.__s3 = session.client('s3')
 
         # build redcap project from parameter store
         ssm = session.client('ssm')
-        parameters = session.client('ssm').get_parameter(Name=redcap_project_path,
-                                                         WithDecryption=True)
-        type_adaptor = TypeAdaptor(REDCapParameters)
-        try:
-            redcap_params = type_adapter.validate_python(parameters)
-            redcap_connection = REDCapConnection.create_from(redcap_params)
-            self.__redcap_project = REDCapProject.create(redcap_connection)
-        except (ParameterError, REDCapConnectionError) as error:
-            raise RuntimeException(
-                f"Failed to load REDCap project from {redcap_project_path}: {error}"
-            ) from error
+        raw_parameters = session.client('ssm').\
+            get_parameters_by_path(Path=redcap_project_path,
+                                   WithDecryption=True,
+                                   Recursive=True)
+
+        parameters = {x['Name'].split('/')[-1]: x['Value']
+                      for x in raw_parameters['Parameters']}
+        type_adapter = TypeAdapter(REDCapParameters)
+
+        redcap_params = type_adapter.validate_python(parameters)
+        redcap_connection = REDCapConnection.create_from(redcap_params)
+        self.__redcap_project = REDCapProject.create(redcap_connection)
 
         # initialize new stats object
         self.__stats = ErrorCheckImportStats()
+        self.__modules = modules
+        self.__failed_fast = fail_fast
+        self.__dry_run = dry_run
 
     @property
     def stats(self) -> ErrorCheckImportStats:
@@ -126,7 +131,7 @@ class REDCapErrorChecksImporter:
         try:
             num_records = self.__redcap_project.import_records(
                 json.dumps(error_checks), data_format='json')
-            log.info(f"Imported {num_records} records from {full_path}")
+            log.info(f"Imported {num_records} records")
             self.__stats.add_to_total_records(num_records)
         except REDCapConnectionError as error:
             raise RuntimeException(error.message) from error
@@ -134,15 +139,13 @@ class REDCapErrorChecksImporter:
     def run(self) -> None:
         """Runs the REDCAP Error Checks import process."""
         log.info("Running REDCAP error check import")
-        file_objects = self.__s3.filter(Prefix='CSV')
 
-        if not file_objects:
-            log.error(f"No files found in {self.__bucket}/CSV")
-            return
-
-        # keep track of import status
-        for key, file in file_objects.items():
-            if not key.endswith('.csv'):
+        # we shouldn't ever have > 1000 error CSVs so don't need
+        # to worry about pagination here
+        s3_params = {'Bucket': self.__bucket, 'Prefix': 'CSV'}
+        for file_metadata in self.__s3.list_objects_v2(**s3_params).get('Contents', []):
+            key = file_metadata.get('Key')
+            if not key or not key.endswith('.csv'):
                 continue
 
             error_key = ErrorCheckKey.create_from_key(key)
@@ -150,9 +153,10 @@ class REDCapErrorChecksImporter:
                 continue
 
             # Load from files from S3
+            file = self.__s3.get_object(Bucket=self.__bucket, Key=key)
             full_path = self.build_full_path(error_key)
             log.info(f"Loading error checks from {full_path}")
-            error_checks = self.load_error_check_csv(error_key, file, stats)
+            error_checks = self.load_error_check_csv(error_key, file, self.__stats)
 
             if not error_checks:
                 if self.__fail_fast:
@@ -170,4 +174,7 @@ class REDCapErrorChecksImporter:
             raise RuntimeException("Failed to import the following:\n" +
                                    "\n".join(self.__stats.failed_files))
 
-        log.info(f"Import complete! Imported {self.__stats.total_records} total records")
+        if not self.__stats.all_error_codes:
+            log.warning("No error codes read")
+        else:
+            log.info(f"Import complete! Imported {self.__stats.total_records} total records")

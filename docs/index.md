@@ -22,3 +22,10 @@ This tool takes in the following inputs. Aside from the profile, none are explic
 | `modules` | `all` | The comma-deliminated list of modules to perform the import for. If `all`, will run for every module directory found under `<checks_s3_bucket>/CSV` |
 | `fail_fast` | `true` | Whether or not to fail fast during import - if set to true, any error check CSV that fails import will halt the gear |
 | `dry_run` | `false` | Whether or not this is a dry run. If true, will pull and read the error checks but will **not** import them into REDCap |
+
+### Running
+
+To run, install the distribution and run via the CLI entrypoint. Example:
+```bash
+redcap-error-checks-import -p default -m 'ENROLL,UDS' --fail-fast --dry-run
+```
