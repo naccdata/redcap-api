@@ -45,20 +45,21 @@ class TestLoadErrorCheckCSV:
 
     def test_valid_csv(self, key, file, stats):
         """Test loading with valid dummy data."""
-        assert load_error_check_csv(key, file, stats) == [{
-            "error_code": "d1a-ivp-m-001",
-            "error_type": "Error",
-            "form_name": "d1a",
-            "packet": "I",
-            "var_name": "FRMDATED1A",
-            "check_type": "Missingness",
-            "test_name": "FRMDATED1A must be present",
-            "short_desc": "FRMDATED1A cannot be blank",
-            "full_desc": "Q0a. FRMDATED1A (D1a form date) cannot be blank",
-            "test_logic": "If FRMDATED1A = blank",
-            "comp_forms": "",
-            "comp_vars": ""
-        }]
+        assert REDCapErrorChecksImporter.\
+            load_error_check_csv(key, file, stats) == [{
+                "error_code": "d1a-ivp-m-001",
+                "error_type": "Error",
+                "form_name": "d1a",
+                "packet": "I",
+                "var_name": "FRMDATED1A",
+                "check_type": "Missingness",
+                "test_name": "FRMDATED1A must be present",
+                "short_desc": "FRMDATED1A cannot be blank",
+                "full_desc": "Q0a. FRMDATED1A (D1a form date) cannot be blank",
+                "test_logic": "If FRMDATED1A = blank",
+                "comp_forms": "",
+                "comp_vars": ""
+            }]
 
     def test_invalid_key(self, stats):
         """Test with an invalid key."""
@@ -73,4 +74,5 @@ class TestLoadErrorCheckCSV:
     def test_empty_error_checks(self, key, headers, stats):
         """Test when there is only a header."""
         data = {"Body": BytesIO(headers.encode('utf-8'))}
-        assert not load_error_check_csv(key, data, stats)
+        assert not REDCapErrorChecksImporter.\
+            load_error_check_csv(key, data, stats)

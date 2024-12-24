@@ -1,5 +1,6 @@
 """Module to handle downloading error check CSVs from S3."""
 import logging
+from csv import DictReader
 from typing import Any, Dict, List, TextIO
 
 from .utils import ErrorCheckKey
@@ -118,7 +119,7 @@ class ErrorCheckCSVVisitor:
 
 
 def read_csv(input_file: TextIO,
-             svisitor: ErrorCheckCSVVisitor,
+             visitor: ErrorCheckCSVVisitor,
              delimiter: str = ',') -> bool:
     """Reads CSV file and applies visitor to each row.
 
