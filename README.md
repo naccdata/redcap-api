@@ -2,7 +2,7 @@
 
 Library for interacting with the REDCap API.
 
-The core library is under `redcap_api`. Additional internal tools that utilize it are under `tools`.
+The core library is under `common/src/python/redcap_api`. Additional internal tools that utilize it are under `tools`.
 
 ### Installing Pants
 
