@@ -1,3 +1,5 @@
 pydantic>=2.5.2
 boto3>=1.28.53
+boto3-stubs[boto3]
 ratelimit>=2.2.1
+ratelimit-types>=0.0.1

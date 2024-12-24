@@ -1,10 +1,10 @@
 """Defines REDCap Import Error Checks."""
-import boto3
 import json
 import logging
 from io import StringIO
 from typing import Any, Dict, List, Optional
 
+import boto3
 from pydantic import TypeAdapter
 from redcap_api.redcap_connection import (
     REDCapConnection,
@@ -58,8 +58,10 @@ class REDCapErrorChecksImporter:
                                    WithDecryption=True,
                                    Recursive=True)
 
-        parameters = {x['Name'].split('/')[-1]: x['Value']
-                      for x in raw_parameters['Parameters']}
+        parameters = {
+            x['Name'].split('/')[-1]: x['Value']
+            for x in raw_parameters['Parameters']
+        }
         type_adapter = TypeAdapter(REDCapParameters)
 
         redcap_params = type_adapter.validate_python(parameters)
@@ -69,7 +71,7 @@ class REDCapErrorChecksImporter:
         # initialize new stats object
         self.__stats = ErrorCheckImportStats()
         self.__modules = modules
-        self.__failed_fast = fail_fast
+        self.__fail_fast = fail_fast
         self.__dry_run = dry_run
 
     @property
@@ -83,11 +85,8 @@ class REDCapErrorChecksImporter:
 
     @classmethod
     def load_error_check_csv(
-        cls,
-        key: ErrorCheckKey,
-        file: Dict[Any, Any],
-        stats: ErrorCheckImportStats
-    ) -> Optional[List[Dict[str, Any]]]:
+            cls, key: ErrorCheckKey, file: Dict[Any, Any],
+            stats: ErrorCheckImportStats) -> Optional[List[Dict[str, Any]]]:
         """Load the error check CSV.
 
         Args:
@@ -101,16 +100,19 @@ class REDCapErrorChecksImporter:
         success = read_csv(input_file=data, visitor=visitor)
 
         if not success:
-            log.error(f"Errors encountered while reading from {key.full_path}:")
+            log.error(
+                f"Errors encountered while reading from {key.full_path}:")
             return None
 
         error_checks = visitor.validated_error_checks
         if not error_checks:
-            log.error(f"No error checks found in {key.full_path}; invalid file?")
+            log.error(
+                f"No error checks found in {key.full_path}; invalid file?")
             return None
 
         # check for duplicates
-        duplicates = stats.add_error_codes([x['error_code'] for x in error_checks])
+        duplicates = stats.add_error_codes(
+            [x['error_code'] for x in error_checks])
         if duplicates:
             log.error(
                 f"Found duplicated errors, will not import file: {duplicates}")
@@ -144,20 +146,23 @@ class REDCapErrorChecksImporter:
         # we shouldn't ever have > 1000 error CSVs so don't need
         # to worry about pagination here
         s3_params = {'Bucket': self.__bucket, 'Prefix': 'CSV'}
-        for file_metadata in self.__s3.list_objects_v2(**s3_params).get('Contents', []):
+        for file_metadata in self.__s3.list_objects_v2(**s3_params).get(
+                'Contents', []):
             key = file_metadata.get('Key')
             if not key or not key.endswith('.csv'):
                 continue
 
             error_key = ErrorCheckKey.create_from_key(key)
-            if self.__modules != ['all'] and error_key.module not in self.__modules:
+            if self.__modules != ['all'
+                                  ] and error_key.module not in self.__modules:
                 continue
 
             # Load from files from S3
             file = self.__s3.get_object(Bucket=self.__bucket, Key=key)
             full_path = self.build_full_path(error_key)
             log.info(f"Loading error checks from {full_path}")
-            error_checks = self.load_error_check_csv(error_key, file, self.__stats)
+            error_checks = self.load_error_check_csv(error_key, file,
+                                                     self.__stats)
 
             if not error_checks:
                 if self.__fail_fast:
@@ -178,5 +183,6 @@ class REDCapErrorChecksImporter:
         if not self.__stats.all_error_codes:
             log.warning("No error codes read")
         else:
-            log.info(f"Import complete! Imported {self.__stats.total_records} "
-                     + "total records")
+            log.info(
+                f"Import complete! Imported {self.__stats.total_records} " +
+                "total records")
