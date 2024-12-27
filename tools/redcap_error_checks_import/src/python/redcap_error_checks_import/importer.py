@@ -96,7 +96,7 @@ class REDCapErrorChecksImporter:
             List of the validated and read in error checks.
         """
         visitor = ErrorCheckCSVVisitor(key=key)
-        data = StringIO(file['Body'].read().decode('utf-8'))
+        data = StringIO(file['Body'].read().decode('utf-8-sig'))
         success = read_csv(input_file=data, visitor=visitor)
 
         if not success:
