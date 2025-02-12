@@ -1,0 +1,22 @@
+# Python
+*.py[cod]
+__pycache__/
+*.pytest*
+
+# System
+.DS_Store
+
+# Pip
+*.egg-info
+
+# Pants workspace files
+/.pants.d
+/dist/
+
+#
+.env
+
+#
+*venv
+
+*.ruff_cache
