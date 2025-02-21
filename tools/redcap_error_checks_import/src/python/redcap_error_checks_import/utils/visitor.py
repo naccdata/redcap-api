@@ -53,8 +53,9 @@ class ErrorCheckCSVVisitor:
                     log.error(f"Missing expected header: {h}")
                     valid = False
                 else:
-                    log.warning(f"Missing expected header: {h}, but ignoring "
-                        + f"headers for {self.__key.module}")
+                    log.warning(
+                        f"Missing expected header: {h}, but ignoring " +
+                        f"headers for {self.__key.module}")
 
         return valid
 
