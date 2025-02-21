@@ -49,8 +49,12 @@ class ErrorCheckCSVVisitor:
                 if h == 'packet' and self.__key.packet is None:
                     continue
 
-                log.error(f"Missing expeceted header: {h}")
-                valid = False
+                if not self.__key.ignore_headers:
+                    log.error(f"Missing expected header: {h}")
+                    valid = False
+                else:
+                    log.warning(f"Missing expected header: {h}, but ignoring "
+                        + f"headers for {self.__key.module}")
 
         return valid
 

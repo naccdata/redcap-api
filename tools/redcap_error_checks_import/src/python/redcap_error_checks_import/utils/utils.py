@@ -28,6 +28,7 @@ class ErrorCheckKey(BaseModel):
     filename: str
     form_name: str
     packet: Optional[str] = None
+    ignore_headers: bool = False
 
     @staticmethod
     def create_from_key(key: str):
@@ -59,15 +60,17 @@ class ErrorCheckKey(BaseModel):
                                  form_name=form_name)
         elif len(key_parts) == 4:
             module = key_parts[1]
-            assert module == 'ENROLL'
+            assert module in ['ENROLL', 'PREPROCESS']
             filename = key_parts[3]
-            form_name = 'enrl'
+            form_name = 'enrl' if module == 'ENROLL' else 'preprocess'
+
             return ErrorCheckKey(full_path=key,
                                  csv=key_parts[0],
                                  module=module,
                                  form_ver=key_parts[2],
                                  filename=filename,
-                                 form_name=form_name)
+                                 form_name=form_name,
+                                 ignore_headers=module == 'PREPROCESS')
 
         raise ValueError(
             f"Cannot parse ErrorCheckKey components from {key}; " +

@@ -11,7 +11,7 @@ python_distribution(
     sdist=True,
     provides=python_artifact(
         name="redcap-error-checks-import",
-        version="0.1.0",
+        version="0.1.1",
         description="Imports error checks into REDCap",
         author="NACC",
         author_email="nacchelp@uw.edu",
