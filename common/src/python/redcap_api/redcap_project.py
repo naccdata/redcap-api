@@ -26,7 +26,7 @@ def get_nacc_developer_permissions(
         username: str,
         expiration: Optional[str] = None,
         forms_list: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
-    """Permissions for a NACC user who has developer privilleges for a project.
+    """Permissions for a NACC user who has developer privileges for a project.
 
     Args:
         username: REDCap username
@@ -236,21 +236,21 @@ class REDCapProject:
 
         return True
 
-    def add_gearbot_user_to_project(self, gearbot_user_id: str):
+    def add_gearbot_user_to_project(self):
         """Add nacc gearbot user to the specified project.
 
         Args:
-            gearbot_user_id: Geartbot user ID
+            redcap_con: API connection for the REDCap project
 
         Raises:
             REDCapConnectionError if the response has an error.
         """
 
         if not self.assign_update_user_role_by_label(
-                gearbot_user_id, REDCapRoles.NACC_TECH_ROLE):
+                DefaultValues.GEARBOT_USER_ID, NACC_GEARBOT_ROLE):
             forms = self.export_instruments()
             gearbot_user = get_nacc_developer_permissions(
-                username=gearbot_user_id, forms_list=forms)
+                username=DefaultValues.GEARBOT_USER_ID, forms_list=forms)
             self.add_user(gearbot_user)
 
     def import_records(self, records: str, data_format: str = 'json') -> int:
@@ -258,7 +258,7 @@ class REDCapProject:
 
         Args:
             records: List of records to be imported as a csv/json string
-            data_format (optional): Import formart, defaults to 'json'.
+            data_format (optional): Import format, defaults to 'json'.
 
         Raises:
           REDCapConnectionError if the response has an error.
