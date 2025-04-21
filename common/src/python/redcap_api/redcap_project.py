@@ -236,21 +236,21 @@ class REDCapProject:
 
         return True
 
-    def add_gearbot_user_to_project(self):
+    def add_gearbot_user_to_project(self, gearbot_user_id: str):
         """Add nacc gearbot user to the specified project.
 
         Args:
-            redcap_con: API connection for the REDCap project
+            gearbot_user_id: Geartbot user ID
 
         Raises:
             REDCapConnectionError if the response has an error.
         """
 
         if not self.assign_update_user_role_by_label(
-                DefaultValues.GEARBOT_USER_ID, NACC_GEARBOT_ROLE):
+                gearbot_user_id, REDCapRoles.NACC_GEARBOT_ROLE):
             forms = self.export_instruments()
             gearbot_user = get_nacc_developer_permissions(
-                username=DefaultValues.GEARBOT_USER_ID, forms_list=forms)
+                username=gearbot_user_id, forms_list=forms)
             self.add_user(gearbot_user)
 
     def import_records(self, records: str, data_format: str = 'json') -> int:
