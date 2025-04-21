@@ -15,9 +15,10 @@ log = logging.getLogger()
 
 class REDCapRoles:
     """Data class for storing REDCap roles."""
-    NACC_TECH_ROLE = 'NACC-TECH-ROLE'
-    NACC_STAFF_ROLE = 'NACC-STAFF-ROLE'
-    CENTER_USER_ROLE = 'CENTER-USER-ROLE'
+    NACC_TECH_ROLE = 'NACC_TECH_ROLE'
+    NACC_STAFF_ROLE = 'NACC_STAFF_ROLE'
+    CENTER_USER_ROLE = 'CENTER_USER_ROLE'
+    NACC_GEARBOT_ROLE = 'NACC_GEARBOT_ROLE'
 
 
 def get_nacc_developer_permissions(
@@ -25,7 +26,7 @@ def get_nacc_developer_permissions(
         username: str,
         expiration: Optional[str] = None,
         forms_list: Optional[List[Dict[str, str]]] = None) -> Dict[str, Any]:
-    """Permissions for a NACC user who has developer privilleges for a project.
+    """Permissions for a NACC user who has developer privileges for a project.
 
     Args:
         username: REDCap username
@@ -246,7 +247,7 @@ class REDCapProject:
         """
 
         if not self.assign_update_user_role_by_label(
-                gearbot_user_id, REDCapRoles.NACC_TECH_ROLE):
+                gearbot_user_id, REDCapRoles.NACC_GEARBOT_ROLE):
             forms = self.export_instruments()
             gearbot_user = get_nacc_developer_permissions(
                 username=gearbot_user_id, forms_list=forms)
@@ -257,7 +258,7 @@ class REDCapProject:
 
         Args:
             records: List of records to be imported as a csv/json string
-            data_format (optional): Import formart, defaults to 'json'.
+            data_format (optional): Import format, defaults to 'json'.
 
         Raises:
           REDCapConnectionError if the response has an error.
