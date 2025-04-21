@@ -15,9 +15,10 @@ log = logging.getLogger()
 
 class REDCapRoles:
     """Data class for storing REDCap roles."""
-    NACC_TECH_ROLE = 'NACC-TECH-ROLE'
-    NACC_STAFF_ROLE = 'NACC-STAFF-ROLE'
-    CENTER_USER_ROLE = 'CENTER-USER-ROLE'
+    NACC_TECH_ROLE = 'NACC_TECH_ROLE'
+    NACC_STAFF_ROLE = 'NACC_STAFF_ROLE'
+    CENTER_USER_ROLE = 'CENTER_USER_ROLE'
+    NACC_GEARBOT_ROLE = 'NACC_GEARBOT_ROLE'
 
 
 def get_nacc_developer_permissions(
