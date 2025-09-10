@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-error-checks-import`
 
+## 0.2.0
+
+* Updates to support BDS, CLS, MLST, NP, and DS
+
 ## 0.1.1
 
 * Updates to support `PREPROCESS` module

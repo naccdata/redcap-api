@@ -17,7 +17,7 @@ This tool takes in the following inputs. Aside from the profile, none are explic
 | Field | Default | Description |
 | ----- | ------- | ----------- |
 | `profile` | Required | The S3 profile to use - requires access to both the S3 bucket and parameter store |
-| `s3_bucket` | `nacc-qc-rules` | The S3 URI containing the error check CSVs; expects files to be under `CSV/<MODULE>/<FORM_VER>/<PACKET>/form_<FORM_NAME>*error_checks_<TYPE>.csv`. The one exception is the enrollment form, which does not have a packet and has a different filename. |
+| `s3_bucket` | `nacc-qc-rules` | The S3 URI containing the error check CSVs; expects files to be under `CSV/<MODULE>/<FORM_VER>/<PACKET>/form_<FORM_NAME>*error_checks_<TYPE>.csv` (PACKET is not required for all modules) |
 | `redcap_project_path` | `/redcap/aws/qcchecks` | AWS parameter base path for the target REDCap project to import error checks to |
 | `modules` | `all` | The comma-deliminated list of modules to perform the import for. If `all`, will run for every module directory found under `<checks_s3_bucket>/CSV` |
 | `fail_fast` | `true` | Whether or not to fail fast during import - if set to true, any error check CSV that fails import will halt the gear |
@@ -27,5 +27,10 @@ This tool takes in the following inputs. Aside from the profile, none are explic
 
 To run, install the distribution and run via the CLI entrypoint. Example:
 ```bash
-redcap-error-checks-import -p default -m 'ENROLL,UDS' --fail-fast --dry-run
+redcap-error-checks-import -p default -m 'UDS' --fail-fast --dry-run
+```
+
+for staging
+```bash
+redcap-error-checks-import -p default -m 'UDS' --redcap-project-path '/redcap/aws/qcchecks-staging' --s3-bucket 'nacc-qc-rules-staging' --fail-fast --dry-run
 ```
