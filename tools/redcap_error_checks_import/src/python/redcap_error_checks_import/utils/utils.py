@@ -60,9 +60,14 @@ class ErrorCheckKey(BaseModel):
                                  form_name=form_name)
         elif len(key_parts) == 4:
             module = key_parts[1]
-            assert module in ['ENROLL', 'PREPROCESS']
+            assert module not in ['UDS', 'FTLD', 'LBD', 'DS']
             filename = key_parts[3]
-            form_name = 'enrl' if module == 'ENROLL' else 'preprocess'
+
+            form_name = filename.split('_')[1]
+            if module == 'ENROLL':
+                form_name = 'enrl'
+            elif module == 'MLST':
+                form_name = 'milestones'
 
             return ErrorCheckKey(full_path=key,
                                  csv=key_parts[0],
