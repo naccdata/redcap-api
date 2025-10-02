@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-error-checks-import`
 
+## 0.2.1
+
+* Updates to use environment variables if profile is not provided
+
 ## 0.2.0
 
 * Updates to support BDS, CLS, MLST, NP, and DS
