@@ -20,7 +20,8 @@ def entrypoint():
         '--aws-profile',
         dest="aws_profile",
         type=str,
-        required=True,
+        required=False,
+        default=None,
         help='The AWS profile to use; requires access to both the ' +
         'parameter store and S3 bucket')
 
@@ -83,10 +84,10 @@ def entrypoint():
     modules = [x.strip() for x in args.modules.split(',')]
 
     importer = REDCapErrorChecksImporter(
-        aws_profile=args.aws_profile,
         s3_bucket=s3_bucket,
         redcap_project_path=redcap_project_path,
         modules=modules,
+        aws_profile=args.aws_profile,
         fail_fast=args.fail_fast,
         dry_run=args.dry_run)
     importer.run()

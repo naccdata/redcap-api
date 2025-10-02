@@ -27,26 +27,30 @@ class REDCapErrorChecksImporter:
     """Class to define REDCap error checks importer."""
 
     def __init__(self,
-                 aws_profile: str,
                  s3_bucket: str,
                  redcap_project_path: str,
                  modules: List[str],
+                 aws_profile: Optional[str] = None,
                  fail_fast: bool = True,
                  dry_run: bool = False) -> None:
         """Initializer.
 
         Args:
-            aws_profile: The AWS profile; expects to have read access
-                from the S3 bucket and parameter store
             s3_bucket: The S3 bucket to read error check CSVs from; expects
                 files to be under a `CSV` directory
             redcap_project_path: AWS parameter base path for the target
                 REDCap project to import into
             modules: List of modules to import error checks for
+            aws_profile: The AWS profile; expects to have read access
+                from the S3 bucket and parameter store. Uses environment
+                if not provided
             fail_fast: Whether or not to fail fast on error
             dry_run: Whether or not this is a dry run
         """
-        session = boto3.Session(profile_name=aws_profile)
+        if aws_profile:
+            session = boto3.Session(profile_name=aws_profile)
+        else:
+            session = boto3.Session()
 
         # get S3 bucket
         self.__bucket = s3_bucket
