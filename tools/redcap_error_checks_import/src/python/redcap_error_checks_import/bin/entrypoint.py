@@ -13,7 +13,7 @@ def entrypoint():
     parser = argparse.ArgumentParser(prog='REDCap Error Checks Importer')
     parser.add_argument('--version',
                         action='version',
-                        version='Run Form Converter version 0.1.0')
+                        version='Run Form Converter version 0.2.1')
 
     parser.add_argument(
         '-p',
