@@ -31,7 +31,7 @@ def entrypoint():
         dest="s3_bucket",
         type=str,
         required=False,
-        default='nacc-qc-rules',
+        default='nacc-qc-rules-staging',
         help='The S3 URI containing the error check CSVs; defaults ' +
         'to the NACC QC Rules bucket')
     parser.add_argument(
@@ -40,7 +40,7 @@ def entrypoint():
         dest="redcap_project_path",
         type=str,
         required=False,
-        default='/redcap/aws/qcchecks/',
+        default='/redcap/aws/qcchecks-staging/',
         help='AWS parameter base path for the target REDCap project ' +
         'to import error checks to; defaults to the NACC QC ' +
         'Checks project')
