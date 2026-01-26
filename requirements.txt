@@ -1,3 +1,2 @@
 requests>=2.18.4
 pytest>=7.2.0
-typing-extensions>=4.8.0 # only needed for python < 3.12

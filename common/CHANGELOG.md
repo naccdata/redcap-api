@@ -2,9 +2,13 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.1.2
+
+* Upgrades to Python 3.12
+
 ## 0.1.1
 
-Updates REDCap user role labels
+* Updates REDCap user role labels
 
 ## 0.1.0
 
