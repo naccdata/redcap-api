@@ -348,9 +348,9 @@ class REDCapProject:
                                                     result_format=exp_format,
                                                     message=message)
 
-    def export_report(
-        self, report_id: str, exp_format: str = 'json'
-    ) -> List[Dict[str, str]] | str:
+    def export_report(self,
+                      report_id: str,
+                      exp_format: str = 'json') -> List[Dict[str, str]] | str:
         """Exports a report from the project.
 
         Args:
@@ -371,7 +371,8 @@ class REDCapProject:
             'exportCheckboxLabel': 'false'
         }
         if exp_format.lower() == 'json':
-            return self.__redcap_con.request_json_value(data=data, message=message)
+            return self.__redcap_con.request_json_value(data=data,
+                                                        message=message)
 
         return self.__redcap_con.request_text_value(data=data,
                                                     result_format=exp_format,
