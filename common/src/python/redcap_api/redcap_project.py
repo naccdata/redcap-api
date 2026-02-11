@@ -348,6 +348,35 @@ class REDCapProject:
                                                     result_format=exp_format,
                                                     message=message)
 
+    def export_report(
+        self, report_id: str, exp_format: str = 'json'
+    ) -> List[Dict[str, str]] | str:
+        """Exports a report from the project.
+
+        Args:
+            report_id: The report to grab
+            exp_format: Export format, defaults to json
+
+        Returns:
+          list of records from the report or
+          a CSV text string depending on exp_format
+        """
+        message = f"pulling report id {report_id}"
+        data = {
+            'content': 'report',
+            'report_id': str(report_id),
+            'csvDelimiter': '' if exp_format == 'json' else ',',
+            'rawOrLabel': 'raw',
+            'rawOrLabelHeaders': 'raw',
+            'exportCheckboxLabel': 'false'
+        }
+        if exp_format.lower() == 'json':
+            return self.__redcap_con.request_json_value(data=data, message=message)
+
+        return self.__redcap_con.request_text_value(data=data,
+                                                    result_format=exp_format,
+                                                    message=message)
+
     def export_events(self) -> List[Dict[str, Any]]:
         """Exports the events defined in the project.
 

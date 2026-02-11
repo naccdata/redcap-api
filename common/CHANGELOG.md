@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.1.3
+
+* Updates to allow REDCapProject to also export reports
+
 ## 0.1.2
 
 * Upgrades to Python 3.12

@@ -7,7 +7,7 @@ python_distribution(
     sdist=True,
     provides=python_artifact(
         name="redcap-api",
-        version="0.1.2",
+        version="0.1.3",
         description="Library for interacting with the REDCap API",
         author="NACC",
         author_email="nacchelp@uw.edu",
