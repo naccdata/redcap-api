@@ -112,8 +112,11 @@ Releases are automated via GitHub Actions. Here's the complete workflow:
 4. **Create and push a release tag:**
 
    ```bash
-   git tag v0.1.3
-   git push origin v0.1.3
+   # Create an annotated tag with a descriptive message
+   git tag -a v0.1.3 -m "Release v0.1.3: Add export_report method"
+   
+   # Push the specific tag to trigger the release workflow
+   git push origin tag v0.1.3
    ```
 
 5. **GitHub Actions will automatically:**
