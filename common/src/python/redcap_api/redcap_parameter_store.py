@@ -1,6 +1,6 @@
 """REDCap-specific parameter store dictionary types."""
 
-from typing_extensions import TypedDict
+from typing import TypedDict
 
 
 class REDCapParameters(TypedDict):
