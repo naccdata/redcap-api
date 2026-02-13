@@ -1,5 +1,6 @@
 """Defines model/util classes specifically used for importing error checks into
 REDCap."""
+
 from typing import List, Optional
 
 from pydantic import BaseModel
@@ -39,48 +40,53 @@ class ErrorCheckKey(BaseModel):
         Returns:
             instantiated ErrorCheckKey
         """
-        key_parts = key.split('/')
+        key_parts = key.split("/")
 
-        if key_parts[0] != 'CSV':
+        if key_parts[0] != "CSV":
             raise ValueError("Expected CSV at top level of S3 key")
 
         if len(key_parts) == 5:
             module = key_parts[1]
             filename = key_parts[4]
-            form_name = filename.split('_')[1]
-            if form_name == 'header':
-                form_name = f'{module.lower()}_header'
+            form_name = filename.split("_")[1]
+            if form_name == "header":
+                form_name = f"{module.lower()}_header"
 
-            return ErrorCheckKey(full_path=key,
-                                 csv=key_parts[0],
-                                 module=module,
-                                 form_ver=key_parts[2],
-                                 packet=key_parts[3],
-                                 filename=filename,
-                                 form_name=form_name)
+            return ErrorCheckKey(
+                full_path=key,
+                csv=key_parts[0],
+                module=module,
+                form_ver=key_parts[2],
+                packet=key_parts[3],
+                filename=filename,
+                form_name=form_name,
+            )
         elif len(key_parts) == 4:
             module = key_parts[1]
-            assert module not in ['UDS', 'FTLD', 'LBD', 'DS']
+            assert module not in ["UDS", "FTLD", "LBD", "DS"]
             filename = key_parts[3]
 
-            form_name = filename.split('_')[1]
-            if module == 'ENROLL':
-                form_name = 'enrl'
-            elif module == 'MLST':
-                form_name = 'milestones'
+            form_name = filename.split("_")[1]
+            if module == "ENROLL":
+                form_name = "enrl"
+            elif module == "MLST":
+                form_name = "milestones"
 
-            return ErrorCheckKey(full_path=key,
-                                 csv=key_parts[0],
-                                 module=module,
-                                 form_ver=key_parts[2],
-                                 filename=filename,
-                                 form_name=form_name,
-                                 ignore_headers=module == 'PREPROCESS')
+            return ErrorCheckKey(
+                full_path=key,
+                csv=key_parts[0],
+                module=module,
+                form_ver=key_parts[2],
+                filename=filename,
+                form_name=form_name,
+                ignore_headers=module == "PREPROCESS",
+            )
 
         raise ValueError(
-            f"Cannot parse ErrorCheckKey components from {key}; " +
-            "Expected to be of the form " +
-            "CSV / MODULE / FORM_VER / PACKET / filename")
+            f"Cannot parse ErrorCheckKey components from {key}; "
+            + "Expected to be of the form "
+            + "CSV / MODULE / FORM_VER / PACKET / filename"
+        )
 
     def get_visit_type(self) -> Optional[str]:
         """Determine visit type from packet.
@@ -91,10 +97,10 @@ class ErrorCheckKey(BaseModel):
         if not self.packet:
             return None
 
-        if self.packet == 'I4':
-            return 'i4vp'
+        if self.packet == "I4":
+            return "i4vp"
 
-        return 'fvp' if self.packet.startswith('F') else 'ivp'
+        return "fvp" if self.packet.startswith("F") else "ivp"
 
 
 class ErrorCheckImportStats:

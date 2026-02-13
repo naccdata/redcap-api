@@ -1,11 +1,13 @@
-python_requirements(name="reqs", )
+python_requirements(
+    name="reqs",
+)
 python_sources(name="redcap_error_checks_import", sources=["*.py", "*/*.py"])
 
 python_distribution(
     name="dist",
     dependencies=[
         ":redcap_error_checks_import",
-        "common/src/python/redcap_api:redcap_api"
+        "common/src/python/redcap_api:redcap_api",
     ],
     wheel=True,
     sdist=True,
@@ -15,12 +17,11 @@ python_distribution(
         description="Imports error checks into REDCap",
         author="NACC",
         author_email="nacchelp@uw.edu",
-        url=
-        "https://github.com/naccdata/redcap-api/tools/redcap_error_checks_import"
+        url="https://github.com/naccdata/redcap-api/tools/redcap_error_checks_import",
     ),
     entry_points={
         "console_scripts": {
-            "redcap-error-checks-import":
-            "redcap_error_checks_import.bin.entrypoint:entrypoint"
+            "redcap-error-checks-import": "redcap_error_checks_import.bin.entrypoint:entrypoint"
         }
-    })
+    },
+)

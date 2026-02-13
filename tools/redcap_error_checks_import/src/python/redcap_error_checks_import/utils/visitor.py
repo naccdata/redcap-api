@@ -1,4 +1,5 @@
 """Module to handle downloading error check CSVs from S3."""
+
 import logging
 from csv import DictReader, Error
 from typing import Any, Dict, List, TextIO
@@ -13,9 +14,20 @@ class ErrorCheckCSVVisitor:
 
     # error_no, do_in_redcap, in_prev_versions,
     # questions, and any other extra headers ignored
-    REQUIRED_HEADERS = ("error_code", "error_type", "form_name", "packet",
-                        "var_name", "check_type", "test_name", "short_desc",
-                        "full_desc", "test_logic", "comp_forms", "comp_vars")
+    REQUIRED_HEADERS = (
+        "error_code",
+        "error_type",
+        "form_name",
+        "packet",
+        "var_name",
+        "check_type",
+        "test_name",
+        "short_desc",
+        "full_desc",
+        "test_logic",
+        "comp_forms",
+        "comp_vars",
+    )
 
     ALLOWED_EMPTY_FIELDS = ("comp_forms", "comp_vars")
 
@@ -46,7 +58,7 @@ class ErrorCheckCSVVisitor:
             if h not in header:
                 # in the case of the enrollment form, packet is
                 # set to None and allowed to be missing
-                if h == 'packet' and self.__key.packet is None:
+                if h == "packet" and self.__key.packet is None:
                     continue
 
                 if not self.__key.ignore_headers:
@@ -54,8 +66,9 @@ class ErrorCheckCSVVisitor:
                     valid = False
                 else:
                     log.warning(
-                        f"Missing expected header: {h}, but ignoring " +
-                        f"headers for {self.__key.module}")
+                        f"Missing expected header: {h}, but ignoring "
+                        + f"headers for {self.__key.module}"
+                    )
 
         return valid
 
@@ -69,7 +82,7 @@ class ErrorCheckCSVVisitor:
         Returns:
             False
         """
-        log.error(f'Row {line_num}: Field {field} {msg}')
+        log.error(f"Row {line_num}: Field {field} {msg}")
         return False
 
     def visit_row(self, row: Dict[str, Any], line_num: int) -> bool:
@@ -85,21 +98,27 @@ class ErrorCheckCSVVisitor:
         """
         valid = True
         for field, value in row.items():
-            if (not value and field not in self.ALLOWED_EMPTY_FIELDS
-                    and field in self.REQUIRED_HEADERS):
-                valid = self.log_row_error(line_num, field, 'cannot be empty')
+            if (
+                not value
+                and field not in self.ALLOWED_EMPTY_FIELDS
+                and field in self.REQUIRED_HEADERS
+            ):
+                valid = self.log_row_error(line_num, field, "cannot be empty")
 
-        form_name = row.get('form_name', '')
+        form_name = row.get("form_name", "")
         if form_name != self.__key.form_name:
             valid = self.log_row_error(
-                line_num, field,
-                f'does not match expected form name {self.__key.form_name}')
+                line_num,
+                field,
+                f"does not match expected form name {self.__key.form_name}",
+            )
 
-        error_code = row.get('error_code', '')
+        error_code = row.get("error_code", "")
         if not error_code.startswith(self.__key.form_name):
             valid = self.log_row_error(
-                line_num, field,
-                f'does not start with expected form name {self.__key.form_name}'
+                line_num,
+                field,
+                f"does not start with expected form name {self.__key.form_name}",
             )
 
         # check packet is consistent
@@ -107,29 +126,30 @@ class ErrorCheckCSVVisitor:
             visit_type = self.__key.get_visit_type()
             if visit_type and visit_type not in error_code:
                 valid = self.log_row_error(
-                    line_num, field,
-                    f'does not have expected visit type {visit_type}')
+                    line_num, field, f"does not have expected visit type {visit_type}"
+                )
 
-            packet = row.get('packet', '')
+            packet = row.get("packet", "")
             if packet != self.__key.packet:
                 valid = self.log_row_error(
-                    line_num, field,
-                    f'does not match expected packet {self.__key.packet}')
+                    line_num,
+                    field,
+                    f"does not match expected packet {self.__key.packet}",
+                )
 
         # only import items in REQUIRED_HEADERS if valid
         if valid:
             upload_row = {
-                field: row[field]
-                for field in self.REQUIRED_HEADERS if field in row
+                field: row[field] for field in self.REQUIRED_HEADERS if field in row
             }
             self.__validated_error_checks.append(upload_row)
 
         return valid
 
 
-def read_csv(input_file: TextIO,
-             visitor: ErrorCheckCSVVisitor,
-             delimiter: str = ',') -> bool:
+def read_csv(
+    input_file: TextIO, visitor: ErrorCheckCSVVisitor, delimiter: str = ","
+) -> bool:
     """Reads CSV file and applies visitor to each row.
 
     Args:
