@@ -1,8 +1,16 @@
 python_sources(name="redcap_api")
 
+resource(name="license", source="LICENSE")
+resource(
+    name="py_typed",
+    source="py.typed",
+)
+resource(name="pyproject", source="pyproject.toml")
+resource(name="readme", source="README.md")
+
 python_distribution(
     name="dist",
-    dependencies=[":redcap_api"],
+    dependencies=[":redcap_api", ":py_typed", ":license", ":readme", ":pyproject"],
     wheel=True,
     sdist=True,
     provides=python_artifact(
