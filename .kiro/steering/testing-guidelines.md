@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Testing guidelines including test organization, pytest usage, and test structure
 ---
 
 # Testing Guidelines

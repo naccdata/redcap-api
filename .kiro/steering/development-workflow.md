@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Common Pants commands and development workflow for formatting, testing, and building
 ---
 
 # Development Workflow

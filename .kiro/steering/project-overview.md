@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Overview of the NACC REDCap API project structure, technologies, and build system
 ---
 
 # NACC REDCap API Project Overview

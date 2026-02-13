@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Dev container workflow and scripts for running commands inside the container
 ---
 
 # Dev Container Workflow

@@ -1,6 +1,7 @@
 ---
 inclusion: auto
 fileMatchPattern: "**/redcap_*"
+description: REDCap API architecture patterns and common usage patterns for the library
 ---
 
 # REDCap API Patterns

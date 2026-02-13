@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Technology stack including dev container, build system, dependencies, and design principles
 ---
 
 # Technology Stack

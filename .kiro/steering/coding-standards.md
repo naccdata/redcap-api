@@ -1,5 +1,6 @@
 ---
 inclusion: auto
+description: Python coding standards including style, formatting, linting rules, and code patterns
 ---
 
 # Coding Standards
