@@ -81,15 +81,42 @@ The above will build sdist and wheel distributions in the `dist` directory. Note
 
 ## Releasing
 
-Releases are automated via GitHub Actions. To create a new release:
+Releases are automated via GitHub Actions. Here's the complete workflow:
 
-1. **Create and push a git tag** with the version number:
+### Development to Release Process
+
+1. **Develop on a feature branch:**
+
+   ```bash
+   git checkout -b feature/my-feature
+   # Make your changes
+   git add .
+   git commit -m "Add new feature"
+   git push origin feature/my-feature
+   ```
+
+2. **Create a Pull Request:**
+   - Open a PR from your feature branch to `main`
+   - GitHub Actions will automatically run linting and tests
+   - Wait for review and approval
+
+3. **Merge to main:**
+   - Merge the PR (squash, merge commit, or rebase - follow your team's convention)
+   - Pull the latest main branch locally:
+
+     ```bash
+     git checkout main
+     git pull origin main
+     ```
+
+4. **Create and push a release tag:**
+
    ```bash
    git tag v0.1.3
    git push origin v0.1.3
    ```
 
-2. **GitHub Actions will automatically:**
+5. **GitHub Actions will automatically:**
    - Update version numbers in BUILD files to match the tag
    - Run linting and type checking
    - Run all tests
@@ -97,6 +124,16 @@ Releases are automated via GitHub Actions. To create a new release:
    - Create a GitHub release with auto-generated release notes
    - Upload all distribution files to the release
 
-The release will be available at: `https://github.com/naccdata/redcap-api/releases`
+6. **Verify the release:**
+   - Check the release at: `https://github.com/naccdata/redcap-api/releases`
+   - Download and test the distribution files if needed
+
+### Version Numbering
+
+Follow [Semantic Versioning](https://semver.org/):
+
+- `v1.0.0` - Major version (breaking changes)
+- `v0.1.0` - Minor version (new features, backwards compatible)
+- `v0.0.1` - Patch version (bug fixes)
 
 > Note: The workflow automatically updates the version in BUILD files during the release process. You don't need to manually update them before tagging.
