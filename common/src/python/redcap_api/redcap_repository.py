@@ -14,8 +14,7 @@ log = logging.getLogger(__name__)
 class REDCapParametersRepository:
     """Repository for REDCap connection credentials."""
 
-    def __init__(self,
-                 redcap_params: Optional[Dict[str, REDCapParameters]] = None):
+    def __init__(self, redcap_params: Optional[Dict[str, REDCapParameters]] = None):
         self.__redcap_params = redcap_params if redcap_params else {}
 
     @property
@@ -24,8 +23,8 @@ class REDCapParametersRepository:
 
     @classmethod
     def create_from_parameterstore(
-            cls, param_store: Any,
-            base_path: str) -> Optional['REDCapParametersRepository']:
+        cls, param_store: Any, base_path: str
+    ) -> Optional["REDCapParametersRepository"]:
         """Populate REDCap parameters repository from parameters stored at AWS
         parameter store.
 
@@ -38,10 +37,10 @@ class REDCapParametersRepository:
         """
         try:
             redcap_params = param_store.get_all_redcap_parameters_at_path(
-                base_path=base_path, prefix='pid_')
+                base_path=base_path, prefix="pid_"
+            )
         except Exception as error:
-            log.error('Error in populating REDCap parameters repository - %s',
-                      error)
+            log.error("Error in populating REDCap parameters repository - %s", error)
             return None
 
         return REDCapParametersRepository(redcap_params)
@@ -53,7 +52,7 @@ class REDCapParametersRepository:
             pid: REDCap PID
             parameters: REDCap connection credentials
         """
-        self.redcap_params[f'pid_{pid}'] = parameters
+        self.redcap_params[f"pid_{pid}"] = parameters
 
     def get_project_parameters(self, pid: int) -> Optional[REDCapParameters]:
         """Retrieve REDCap parameters for the given project.
@@ -64,7 +63,7 @@ class REDCapParametersRepository:
         Returns:
             REDCapParameters(optional): REDCap connection credentials if found
         """
-        return self.redcap_params.get(f'pid_{pid}', None)
+        return self.redcap_params.get(f"pid_{pid}", None)
 
     def get_redcap_project(self, pid: int) -> Optional[REDCapProject]:
         """Get an API connection to the REDCap project identified by the PID
@@ -80,8 +79,8 @@ class REDCapParametersRepository:
         redcap_params = self.get_project_parameters(pid)
         if not redcap_params:
             log.error(
-                'Failed to find parameters for REDCap project %s in repository',
-                pid)
+                "Failed to find parameters for REDCap project %s in repository", pid
+            )
             return None
 
         redcap_con = REDCapConnection.create_from(redcap_params)

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Entrypoint for the REDCap Error Checks Import."""
+
 import argparse
 import logging
 
@@ -10,62 +11,69 @@ log = logging.getLogger(__name__)
 
 
 def entrypoint():
-    parser = argparse.ArgumentParser(prog='REDCap Error Checks Importer')
-    parser.add_argument('--version',
-                        action='version',
-                        version='Run Form Converter version 0.2.1')
+    parser = argparse.ArgumentParser(prog="REDCap Error Checks Importer")
+    parser.add_argument(
+        "--version", action="version", version="Run Form Converter version 0.2.1"
+    )
 
     parser.add_argument(
-        '-p',
-        '--aws-profile',
+        "-p",
+        "--aws-profile",
         dest="aws_profile",
         type=str,
         required=False,
         default=None,
-        help='The AWS profile to use; requires access to both the ' +
-        'parameter store and S3 bucket')
+        help="The AWS profile to use; requires access to both the "
+        + "parameter store and S3 bucket",
+    )
 
     parser.add_argument(
-        '-b',
-        '--s3-bucket',
+        "-b",
+        "--s3-bucket",
         dest="s3_bucket",
         type=str,
         required=False,
-        default='nacc-qc-rules-staging',
-        help='The S3 URI containing the error check CSVs; defaults ' +
-        'to the NACC QC Rules bucket')
+        default="nacc-qc-rules-staging",
+        help="The S3 URI containing the error check CSVs; defaults "
+        + "to the NACC QC Rules bucket",
+    )
     parser.add_argument(
-        '-r',
-        '--redcap-project-path',
+        "-r",
+        "--redcap-project-path",
         dest="redcap_project_path",
         type=str,
         required=False,
-        default='/redcap/aws/qcchecks-staging/',
-        help='AWS parameter base path for the target REDCap project ' +
-        'to import error checks to; defaults to the NACC QC ' +
-        'Checks project')
+        default="/redcap/aws/qcchecks-staging/",
+        help="AWS parameter base path for the target REDCap project "
+        + "to import error checks to; defaults to the NACC QC "
+        + "Checks project",
+    )
 
     parser.add_argument(
-        '-m',
-        '--modules',
+        "-m",
+        "--modules",
         dest="modules",
         type=str,
         required=False,
-        default='all',
-        help='Comma-deliminated list of modules to perform the import ' +
-        'for. Defaults to \'all\', which just means it will ' +
-        'run for every subdirectory found under CSV`')
+        default="all",
+        help="Comma-deliminated list of modules to perform the import "
+        + "for. Defaults to 'all', which just means it will "
+        + "run for every subdirectory found under CSV`",
+    )
 
-    parser.add_argument('--fail-fast',
-                        dest="fail_fast",
-                        action='store_true',
-                        help='Whether or not to fail fast during import')
     parser.add_argument(
-        '--dry-run',
+        "--fail-fast",
+        dest="fail_fast",
+        action="store_true",
+        help="Whether or not to fail fast during import",
+    )
+    parser.add_argument(
+        "--dry-run",
         dest="dry_run",
-        action='store_true',
-        help='Whether or not to do a dry run; will read CSVs but ' +
-        'will not import into REDCap')
+        action="store_true",
+        help="Whether or not to do a dry run; will read CSVs but "
+        + "will not import into REDCap",
+    )
 
     args = parser.parse_args()
 
@@ -77,11 +85,13 @@ def entrypoint():
     log.info(f"fail_fast:\t\t{args.fail_fast}")
     log.info(f"dry_run:\t\t\t{args.dry_run}")
 
-    s3_bucket = args.s3_bucket.replace('s3://', '').rstrip('/')
-    redcap_project_path = args.redcap_project_path \
-        if args.redcap_project_path.endswith('/') \
-        else f'{args.redcap_project_path}/'
-    modules = [x.strip() for x in args.modules.split(',')]
+    s3_bucket = args.s3_bucket.replace("s3://", "").rstrip("/")
+    redcap_project_path = (
+        args.redcap_project_path
+        if args.redcap_project_path.endswith("/")
+        else f"{args.redcap_project_path}/"
+    )
+    modules = [x.strip() for x in args.modules.split(",")]
 
     importer = REDCapErrorChecksImporter(
         s3_bucket=s3_bucket,
@@ -89,7 +99,8 @@ def entrypoint():
         modules=modules,
         aws_profile=args.aws_profile,
         fail_fast=args.fail_fast,
-        dry_run=args.dry_run)
+        dry_run=args.dry_run,
+    )
     importer.run()
 
 

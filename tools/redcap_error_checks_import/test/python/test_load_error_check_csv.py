@@ -1,4 +1,5 @@
 """Tests the load_error_check_csv method."""
+
 from io import BytesIO
 
 import pytest
@@ -7,7 +8,7 @@ from redcap_error_checks_import.utils.utils import ErrorCheckImportStats, ErrorC
 from redcap_error_checks_import.utils.visitor import ErrorCheckCSVVisitor
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def stats():
     return ErrorCheckImportStats()
 
@@ -16,21 +17,22 @@ def stats():
 def headers():
     """Creates dummy headers for testing."""
     headers = list(ErrorCheckCSVVisitor.REQUIRED_HEADERS)
-    headers.extend(
-        ['error_no', 'do_in_redcap', 'in_prev_versions', 'questions'])
-    return ','.join(headers)
+    headers.extend(["error_no", "do_in_redcap", "in_prev_versions", "questions"])
+    return ",".join(headers)
 
 
 @pytest.fixture(scope="module")
 def file(headers):
     """Creates dummy data in FileObject format for testing."""
-    row = 'd1a-ivp-m-001,Error,d1a,I,FRMDATED1A,Missingness,' \
-        + 'FRMDATED1A must be present,FRMDATED1A cannot be blank,' \
-        + 'Q0a. FRMDATED1A (D1a form date) cannot be blank,' \
-        + 'If FRMDATED1A = blank,,,001,Yes,'
+    row = (
+        "d1a-ivp-m-001,Error,d1a,I,FRMDATED1A,Missingness,"
+        + "FRMDATED1A must be present,FRMDATED1A cannot be blank,"
+        + "Q0a. FRMDATED1A (D1a form date) cannot be blank,"
+        + "If FRMDATED1A = blank,,,001,Yes,"
+    )
 
-    data = f'{headers}\n{row}'
-    return {"Body": BytesIO(data.encode('utf-8'))}
+    data = f"{headers}\n{row}"
+    return {"Body": BytesIO(data.encode("utf-8"))}
 
 
 @pytest.fixture(scope="module")
@@ -45,8 +47,8 @@ class TestLoadErrorCheckCSV:
 
     def test_valid_csv(self, key, file, stats):
         """Test loading with valid dummy data."""
-        assert REDCapErrorChecksImporter.\
-            load_error_check_csv(key, file, stats) == [{
+        assert REDCapErrorChecksImporter.load_error_check_csv(key, file, stats) == [
+            {
                 "error_code": "d1a-ivp-m-001",
                 "error_type": "Error",
                 "form_name": "d1a",
@@ -58,21 +60,23 @@ class TestLoadErrorCheckCSV:
                 "full_desc": "Q0a. FRMDATED1A (D1a form date) cannot be blank",
                 "test_logic": "If FRMDATED1A = blank",
                 "comp_forms": "",
-                "comp_vars": ""
-            }]
+                "comp_vars": "",
+            }
+        ]
 
     def test_invalid_key(self, stats):
         """Test with an invalid key."""
         with pytest.raises(ValueError) as e:
             ErrorCheckKey.create_from_key("CSV/bad/key.csv")
 
-        assert str(e.value) == \
-            "Cannot parse ErrorCheckKey components from CSV/bad/key.csv; " \
-            + "Expected to be of the form " \
+        assert (
+            str(e.value)
+            == "Cannot parse ErrorCheckKey components from CSV/bad/key.csv; "
+            + "Expected to be of the form "
             + "CSV / MODULE / FORM_VER / PACKET / filename"
+        )
 
     def test_empty_error_checks(self, key, headers, stats):
         """Test when there is only a header."""
-        data = {"Body": BytesIO(headers.encode('utf-8'))}
-        assert not REDCapErrorChecksImporter.\
-            load_error_check_csv(key, data, stats)
+        data = {"Body": BytesIO(headers.encode("utf-8"))}
+        assert not REDCapErrorChecksImporter.load_error_check_csv(key, data, stats)

@@ -11,5 +11,6 @@ python_distribution(
         description="Library for interacting with the REDCap API",
         author="NACC",
         author_email="nacchelp@uw.edu",
-        url="https://github.com/naccdata/redcap-api"),
+        url="https://github.com/naccdata/redcap-api",
+    ),
 )
