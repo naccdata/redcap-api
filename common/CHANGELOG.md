@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.1.5
+
+* Adds optional `date_range_begin` and `date_range_end` parameters to `REDCapProject.export_records()` for filtering records by modification date
+
 ## 0.1.3
 
 * Updates to allow REDCapProject to also export reports

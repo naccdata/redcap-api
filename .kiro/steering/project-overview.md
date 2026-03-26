@@ -31,4 +31,6 @@ This repository contains a Python library for interacting with the REDCap API, d
 
 ## Build System
 
-This is a Pants-based monorepo. Each component has its own BUILD file defining dependencies and build targets. Version numbers are set in BUILD files, not in setup.py or pyproject.toml.
+This is a Pants-based monorepo. Each component has its own BUILD file defining dependencies and build targets.
+
+Version numbers must be kept in sync across three files per package: `CHANGELOG.md`, `BUILD` (in `python_artifact()`), and `pyproject.toml`. The CI release workflow overrides the BUILD file version from the git tag at build time, but all three should be updated before merging. See the development workflow steering doc for full release details.

@@ -313,6 +313,8 @@ class REDCapProject:
         forms: Optional[list[str]] = None,
         events: Optional[list[str]] = None,
         filters: Optional[str] = None,
+        date_range_begin: Optional[str] = None,
+        date_range_end: Optional[str] = None,
     ) -> List[Dict[str, str]] | str:
         """Export records from the REDCap project.
 
@@ -323,6 +325,14 @@ class REDCapProject:
             forms (Optional): List of forms to be included
             events (Optional): List of events to be included
             filters (Optional) : Filter logic as a string (e.g. [age]>30)
+            date_range_begin (Optional): Return only records created or
+                modified after this date/time. Format: YYYY-MM-DD HH:MM:SS
+                (e.g., '2017-01-01 00:00:00'). If not specified, assumes
+                no begin time.
+            date_range_end (Optional): Return only records created or
+                modified before this date/time. Format: YYYY-MM-DD HH:MM:SS
+                (e.g., '2017-01-01 00:00:00'). If not specified, uses the
+                current server time.
 
         Returns:
             The list of records (JSON objects) or
@@ -353,6 +363,14 @@ class REDCapProject:
         # If any filters specified, export only matching records.
         if filters:
             data["filterLogic"] = filters
+
+        # If date range begin specified, export only records modified after.
+        if date_range_begin:
+            data["dateRangeBegin"] = date_range_begin
+
+        # If date range end specified, export only records modified before.
+        if date_range_end:
+            data["dateRangeEnd"] = date_range_end
 
         message = "failed to export records"
         if exp_format.lower() == "json":
