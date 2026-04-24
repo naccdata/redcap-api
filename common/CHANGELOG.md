@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.2.0
+
+* Adds `export_user_role_assignments()` method to `REDCapProject` for exporting user-to-role mappings from a project
+
 ## 0.1.5
 
 * Adds optional `date_range_begin` and `date_range_end` parameters to `REDCapProject.export_records()` for filtering records by modification date

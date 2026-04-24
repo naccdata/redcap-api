@@ -168,6 +168,23 @@ class REDCapProject:
 
         return self.__redcap_con.request_json_value(data=data, message=message)
 
+    def export_user_role_assignments(self) -> List[Dict[str, Any]]:
+        """Export user-role assignments for the project.
+
+        Returns the mapping of users to roles in the project. Each entry
+        contains a ``username`` and ``unique_role_name`` key.
+
+        Returns:
+            List of user-role assignment dicts
+
+        Raises:
+          REDCapConnectionError if the response has an error
+        """
+        message = "exporting user-role assignments"
+        data = {"content": "userRoleMapping"}
+
+        return self.__redcap_con.request_json_value(data=data, message=message)
+
     def assign_user_role(self, username: str, role: str) -> int:
         """Assign given user to a user role in REDCap project.
 
