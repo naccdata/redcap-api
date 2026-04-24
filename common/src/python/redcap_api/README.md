@@ -108,6 +108,21 @@ report_conn = REDCapReportConnection(
 records = report_conn.get_report_records()
 ```
 
+### User and Role Management
+
+```python
+# Export role definitions
+roles = project.export_user_roles()
+
+# Export user-role assignments (who has which role)
+assignments = project.export_user_role_assignments()
+for entry in assignments:
+    print(f"{entry['username']} -> {entry['unique_role_name']}")
+
+# Assign a user to a role
+project.assign_user_role("jsmith", "U-123ABC")
+```
+
 ## Main Components
 
 ### REDCapConnection
