@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.3.0
+
+* Adds `export_users()` method to `REDCapProject` for exporting the list of users in a project with their privileges
+
 ## 0.2.0
 
 * Adds `export_user_role_assignments()` method to `REDCapProject` for exporting user-to-role mappings from a project
