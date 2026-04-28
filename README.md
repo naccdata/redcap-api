@@ -109,7 +109,18 @@ Releases are automated via GitHub Actions. Here's the complete workflow:
      git pull origin main
      ```
 
-4. **Create and push a release tag:**
+4. **Update the changelog:**
+   - Add an entry for the new version to the `CHANGELOG.md` in the relevant package directory (e.g., `common/CHANGELOG.md` or `tools/<name>/CHANGELOG.md`)
+   - Summarize the user-facing changes for the release
+   - Commit the changelog update to `main`:
+
+     ```bash
+     git add common/CHANGELOG.md
+     git commit -m "Update changelog for v0.1.3"
+     git push origin main
+     ```
+
+5. **Create and push a release tag:**
 
    ```bash
    # Create an annotated tag with a descriptive message
