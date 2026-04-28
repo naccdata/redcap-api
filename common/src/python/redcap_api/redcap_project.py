@@ -185,6 +185,28 @@ class REDCapProject:
 
         return self.__redcap_con.request_json_value(data=data, message=message)
 
+    def export_users(self) -> List[Dict[str, Any]]:
+        """Export the list of users for the project.
+
+        Returns the list of users in the project with their privileges.
+        Each entry contains at minimum ``username``, ``email``,
+        ``firstname``, and ``lastname`` keys, along with privilege flags.
+
+        Note: If a user has been assigned to a user role, the returned
+        record reflects the role's defined privileges rather than
+        individual settings.
+
+        Returns:
+            List of user dicts with privileges
+
+        Raises:
+          REDCapConnectionError if the response has an error
+        """
+        message = "exporting users"
+        data = {"content": "user"}
+
+        return self.__redcap_con.request_json_value(data=data, message=message)
+
     def assign_user_role(self, username: str, role: str) -> int:
         """Assign given user to a user role in REDCap project.
 
