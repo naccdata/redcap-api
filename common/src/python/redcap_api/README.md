@@ -111,6 +111,11 @@ records = report_conn.get_report_records()
 ### User and Role Management
 
 ```python
+# Export all users in the project with their privileges
+users = project.export_users()
+for user in users:
+    print(f"{user['username']} ({user['email']})")
+
 # Export role definitions
 roles = project.export_user_roles()
 
