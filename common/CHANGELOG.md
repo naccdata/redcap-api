@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.4.0
+
+* Adds `delete_user()` method to `REDCapProject` for removing the specified user from a project
+
 ## 0.3.0
 
 * Adds `export_users()` method to `REDCapProject` for exporting the list of users in a project with their privileges
