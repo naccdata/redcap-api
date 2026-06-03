@@ -252,6 +252,29 @@ class REDCapProject:
 
         return self.__redcap_con.request_json_value(data=data, message=message)
 
+    def delete_user(self, username: str):
+        """Removes the specified user from the project.
+
+        Args:
+            username: username to be removed
+
+        Returns:
+            int: Number of users removed
+
+        Raises:
+          REDCapConnectionError if the response has an error
+        """
+
+        message = f"removing user {username}"
+        data = {
+            "content": "user",
+            "action": "delete",
+            "format": "json",
+            "users[0]": username,
+        }
+
+        return self.__redcap_con.request_json_value(data=data, message=message)
+
     def assign_update_user_role_by_label(self, username: str, role_label: str) -> bool:
         """Assign or update user permissions in the REDCap project.
 
