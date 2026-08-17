@@ -128,6 +128,32 @@ for entry in assignments:
 project.assign_user_role("jsmith", "U-123ABC")
 ```
 
+### External Module Endpoints
+
+```python
+from redcap_api.redcap_module_connection import REDCapModuleConnection
+
+# Connect to an External Module endpoint
+module_conn = REDCapModuleConnection(
+    token="your-api-token",
+    url="https://redcap.example.com",
+    module_prefix="locking_api",
+)
+
+# Post a request to a module action page (JSON response)
+result = module_conn.post_module_request(
+    action_page="status",
+    data={"record": "001", "instrument": "demographics"},
+)
+
+# Get CSV response instead
+csv_data = module_conn.post_module_request(
+    action_page="status",
+    data={},
+    return_format="csv",
+)
+```
+
 ## Main Components
 
 ### REDCapConnection
@@ -141,6 +167,14 @@ Represents a REDCap project with methods for:
 - Managing instruments and events
 - User and role management
 - Project metadata
+
+### REDCapModuleConnection
+
+Connects to REDCap External Module endpoints with:
+- Validated module prefix and action page identifiers
+- Rate limiting (20 calls per second)
+- Support for JSON, CSV, and XML response formats
+- Trailing slash normalization on base URLs
 
 ### REDCapSuperUserConnection
 
