@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import re
 from json import JSONDecodeError
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Literal
+from urllib.parse import urlencode
 
 import requests  # type: ignore
 from ratelimit import limits, sleep_and_retry
@@ -60,11 +61,8 @@ class REDCapModuleConnection:
             Configured REDCapModuleConnection instance.
 
         Raises:
-            ValueError: If module_prefix is empty or not a string.
+            REDCapConnectionError: If module_prefix is invalid.
         """
-        if not isinstance(module_prefix, str) or not module_prefix:
-            raise ValueError("A non-empty module prefix is required")
-
         return cls(
             token=parameters["token"],
             url=parameters["url"],
@@ -78,7 +76,7 @@ class REDCapModuleConnection:
         *,
         action_page: str,
         data: Dict[str, str],
-        return_format: str = "json",
+        return_format: Literal["json", "csv", "xml"] = "json",
     ) -> List[Dict[str, Any]] | str:
         """Post a request to a module endpoint.
 
@@ -144,10 +142,15 @@ class REDCapModuleConnection:
             The full endpoint URL string.
         """
         base = self.__url.rstrip("/")
-        return (
-            f"{base}/api/?NOAUTH&type=module"
-            f"&prefix={self.__module_prefix}&page={action_page}"
+        params = urlencode(
+            {
+                "NOAUTH": "",
+                "type": "module",
+                "prefix": self.__module_prefix,
+                "page": action_page,
+            }
         )
+        return f"{base}/api/?{params}"
 
     @staticmethod
     def _validate_identifier(value: str, name: str) -> None:

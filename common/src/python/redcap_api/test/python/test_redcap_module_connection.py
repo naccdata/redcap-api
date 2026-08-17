@@ -80,19 +80,20 @@ class TestREDCapModuleConnectionFactory:
         assert conn.url == "https://redcap.example.com"
         assert conn.module_prefix == "locking_api"
 
-    def test_empty_prefix_raises_value_error(self):
-        """Test create_from with empty prefix raises ValueError."""
+    def test_empty_prefix_raises_connection_error(self):
+        """Test create_from with empty prefix raises REDCapConnectionError."""
         params = {"url": "https://redcap.example.com", "token": "my_token"}
-        with pytest.raises(ValueError, match="non-empty module prefix"):
+        with pytest.raises(REDCapConnectionError):
             REDCapModuleConnection.create_from(parameters=params, module_prefix="")
 
-    def test_non_string_prefix_raises_value_error(self):
-        """Test create_from with non-string prefix raises ValueError."""
+    def test_invalid_prefix_raises_connection_error(self):
+        """Test create_from with invalid prefix raises
+        REDCapConnectionError."""
         params = {"url": "https://redcap.example.com", "token": "my_token"}
-        with pytest.raises(ValueError, match="non-empty module prefix"):
+        with pytest.raises(REDCapConnectionError):
             REDCapModuleConnection.create_from(
                 parameters=params,
-                module_prefix=123,  # type: ignore[arg-type]
+                module_prefix="Invalid-Prefix!",
             )
 
 
@@ -112,12 +113,17 @@ class TestREDCapModuleConnectionURL:
 
         connection.post_module_request(action_page="status", data={})
 
-        expected_url = (
-            "https://redcap.example.com/api/?NOAUTH&type=module"
-            "&prefix=locking_api&page=status"
-        )
         actual_url = mock_post.call_args[0][0]
-        assert actual_url == expected_url
+        parsed = urlparse(actual_url)
+        query_params = parse_qs(parsed.query)
+
+        assert parsed.scheme == "https"
+        assert parsed.netloc == "redcap.example.com"
+        assert parsed.path == "/api/"
+        assert "NOAUTH" in parsed.query
+        assert query_params["type"] == ["module"]
+        assert query_params["prefix"] == ["locking_api"]
+        assert query_params["page"] == ["status"]
 
     @patch("redcap_api.redcap_module_connection.requests.post")
     def test_trailing_slash_normalization(self, mock_post):
@@ -342,13 +348,16 @@ class TestREDCapModuleConnectionPostRequest:
             data={},
         )
 
-        expected_url = (
-            "https://redcap.example.com/api/?NOAUTH&type=module"
-            "&prefix=locking_api&page=status"
-        )
         call_args = mock_post.call_args
         actual_url = call_args[0][0] if call_args[0] else call_args[1].get("url", "")
-        assert actual_url == expected_url
+        parsed = urlparse(actual_url)
+        query_params = parse_qs(parsed.query)
+
+        assert parsed.path == "/api/"
+        assert "NOAUTH" in parsed.query
+        assert query_params["type"] == ["module"]
+        assert query_params["prefix"] == ["locking_api"]
+        assert query_params["page"] == ["status"]
 
     @patch("redcap_api.redcap_module_connection.requests.post")
     def test_http_error_does_not_expose_token(self, mock_post):
@@ -397,7 +406,7 @@ class TestURLRoundTripProperty:
         prefix=st.from_regex(r"[a-z0-9_]{1,64}", fullmatch=True),
         action_page=st.from_regex(r"[a-z0-9_]{1,64}", fullmatch=True),
     )
-    @settings(max_examples=100)
+    @settings(max_examples=100, deadline=None)
     def test_url_components_match_expected_pattern(self, base_url, prefix, action_page):
         """**Validates: Requirements 1.1, 1.2, 6.1**
 
@@ -412,8 +421,15 @@ class TestURLRoundTripProperty:
             module_prefix=prefix,
         )
 
-        # Access private method via name mangling
-        endpoint_url = conn._build_endpoint_url(action_page)  # noqa: SLF001
+        with patch("redcap_api.redcap_module_connection.requests.post") as mock_post:
+            mock_response = MagicMock()
+            mock_response.ok = True
+            mock_response.json.return_value = []
+            mock_post.return_value = mock_response
+
+            conn.post_module_request(action_page=action_page, data={})
+
+            endpoint_url = mock_post.call_args[0][0]
 
         parsed = urlparse(endpoint_url)
         query_params = parse_qs(parsed.query)
@@ -432,7 +448,7 @@ class TestURLRoundTripProperty:
         prefix=st.from_regex(r"[a-z0-9_]{1,64}", fullmatch=True),
         action_page=st.from_regex(r"[a-z0-9_]{1,64}", fullmatch=True),
     )
-    @settings(max_examples=100)
+    @settings(max_examples=100, deadline=None)
     def test_trailing_slash_invariance(self, base_url, prefix, action_page):
         """**Validates: Requirements 1.2, 6.1**
 
@@ -450,12 +466,20 @@ class TestURLRoundTripProperty:
             module_prefix=prefix,
         )
 
-        url_without = conn_without_slash._build_endpoint_url(  # noqa: SLF001
-            action_page
-        )
-        url_with = conn_with_slash._build_endpoint_url(  # noqa: SLF001
-            action_page
-        )
+        with patch("redcap_api.redcap_module_connection.requests.post") as mock_post:
+            mock_response = MagicMock()
+            mock_response.ok = True
+            mock_response.json.return_value = []
+            mock_post.return_value = mock_response
+
+            conn_without_slash.post_module_request(action_page=action_page, data={})
+            url_without = mock_post.call_args[0][0]
+
+            mock_post.reset_mock()
+            mock_post.return_value = mock_response
+
+            conn_with_slash.post_module_request(action_page=action_page, data={})
+            url_with = mock_post.call_args[0][0]
 
         assert url_without == url_with
 
