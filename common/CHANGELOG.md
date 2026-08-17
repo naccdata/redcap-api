@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.5.0
+
+* Adds `REDCapModuleConnection` class for posting requests to REDCap External Module endpoints (e.g., locking API)
+
 ## 0.4.0
 
 * Adds `delete_user()` method to `REDCapProject` for removing the specified user from a project
