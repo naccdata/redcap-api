@@ -31,6 +31,7 @@ The project enforces these rule categories:
 - Use type hints for all function signatures
 - MyPy type checking is enabled
 - Use `Optional[T]` for nullable types
+- Use `|` for union types (e.g., `List[Dict[str, Any]] | str`), not `Union[...]`
 - Use `List[Dict[str, Any]]` style annotations (not `list[dict]` for consistency with Python 3.9+ style seen in codebase)
 
 ### Documentation
