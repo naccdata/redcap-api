@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.5.1
+
+* Fixes duplicate `/api/` path segment in `REDCapModuleConnection` endpoint URL construction that caused 404 errors
+
 ## 0.5.0
 
 * Adds `REDCapModuleConnection` class for posting requests to REDCap External Module endpoints (e.g., locking API)
