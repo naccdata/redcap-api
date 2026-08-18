@@ -150,7 +150,7 @@ class REDCapModuleConnection:
                 "page": action_page,
             }
         )
-        return f"{base}/api/?{params}"
+        return f"{base}/?{params}"
 
     @staticmethod
     def _validate_identifier(value: str, name: str) -> None:

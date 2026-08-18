@@ -21,7 +21,7 @@ def connection():
     """Create a REDCapModuleConnection for testing."""
     return REDCapModuleConnection(
         token="ABCDEF123456",
-        url="https://redcap.example.com",
+        url="https://redcap.example.com/api/",
         module_prefix="locking_api",
     )
 
@@ -36,10 +36,10 @@ class TestREDCapModuleConnectionConstructor:
         """Test construction with valid keyword-only args."""
         conn = REDCapModuleConnection(
             token="test_token",
-            url="https://redcap.example.com",
+            url="https://redcap.example.com/api/",
             module_prefix="my_module",
         )
-        assert conn.url == "https://redcap.example.com"
+        assert conn.url == "https://redcap.example.com/api/"
         assert conn.module_prefix == "my_module"
 
     def test_invalid_prefix_raises_error(self):
@@ -47,7 +47,7 @@ class TestREDCapModuleConnectionConstructor:
         with pytest.raises(REDCapConnectionError):
             REDCapModuleConnection(
                 token="test_token",
-                url="https://redcap.example.com",
+                url="https://redcap.example.com/api/",
                 module_prefix="Invalid-Prefix!",
             )
 
@@ -56,7 +56,7 @@ class TestREDCapModuleConnectionConstructor:
         with pytest.raises(REDCapConnectionError):
             REDCapModuleConnection(
                 token="test_token",
-                url="https://redcap.example.com",
+                url="https://redcap.example.com/api/",
                 module_prefix="",
             )
 
@@ -64,7 +64,7 @@ class TestREDCapModuleConnectionConstructor:
         """Test that positional arguments raise TypeError."""
         with pytest.raises(TypeError):
             REDCapModuleConnection(  # type: ignore[misc]
-                "test_token", "https://redcap.example.com", "my_module"
+                "test_token", "https://redcap.example.com/api/", "my_module"
             )
 
 
@@ -73,23 +73,23 @@ class TestREDCapModuleConnectionFactory:
 
     def test_valid_params_produces_correct_properties(self):
         """Test create_from with valid params produces correct properties."""
-        params = {"url": "https://redcap.example.com", "token": "my_token"}
+        params = {"url": "https://redcap.example.com/api/", "token": "my_token"}
         conn = REDCapModuleConnection.create_from(
             parameters=params, module_prefix="locking_api"
         )
-        assert conn.url == "https://redcap.example.com"
+        assert conn.url == "https://redcap.example.com/api/"
         assert conn.module_prefix == "locking_api"
 
     def test_empty_prefix_raises_connection_error(self):
         """Test create_from with empty prefix raises REDCapConnectionError."""
-        params = {"url": "https://redcap.example.com", "token": "my_token"}
+        params = {"url": "https://redcap.example.com/api/", "token": "my_token"}
         with pytest.raises(REDCapConnectionError):
             REDCapModuleConnection.create_from(parameters=params, module_prefix="")
 
     def test_invalid_prefix_raises_connection_error(self):
         """Test create_from with invalid prefix raises
         REDCapConnectionError."""
-        params = {"url": "https://redcap.example.com", "token": "my_token"}
+        params = {"url": "https://redcap.example.com/api/", "token": "my_token"}
         with pytest.raises(REDCapConnectionError):
             REDCapModuleConnection.create_from(
                 parameters=params,
@@ -135,12 +135,12 @@ class TestREDCapModuleConnectionURL:
 
         conn_with_slash = REDCapModuleConnection(
             token="token",
-            url="https://redcap.example.com/",
+            url="https://redcap.example.com/api/",
             module_prefix="locking_api",
         )
         conn_without_slash = REDCapModuleConnection(
             token="token",
-            url="https://redcap.example.com",
+            url="https://redcap.example.com/api",
             module_prefix="locking_api",
         )
 
@@ -365,7 +365,7 @@ class TestREDCapModuleConnectionPostRequest:
         token = "SECRET_TOKEN_VALUE_12345"
         conn = REDCapModuleConnection(
             token=token,
-            url="https://redcap.example.com",
+            url="https://redcap.example.com/api/",
             module_prefix="locking_api",
         )
         mock_response = MagicMock()
@@ -402,7 +402,7 @@ class TestURLRoundTripProperty:
     """
 
     @given(
-        base_url=st.from_regex(r"https?://[a-z]+\.[a-z]+", fullmatch=True),
+        base_url=st.from_regex(r"https?://[a-z]+\.[a-z]+/api", fullmatch=True),
         prefix=st.from_regex(r"[a-z0-9_]{1,64}", fullmatch=True),
         action_page=st.from_regex(r"[a-z0-9_]{1,64}", fullmatch=True),
     )
@@ -410,9 +410,9 @@ class TestURLRoundTripProperty:
     def test_url_components_match_expected_pattern(self, base_url, prefix, action_page):
         """**Validates: Requirements 1.1, 1.2, 6.1**
 
-        For any valid base URL, module prefix, and action page, the
-        constructed endpoint URL SHALL have a path ending in /api/ and
-        query parameters containing NOAUTH, type=module, prefix=<prefix>,
+        For any valid base URL (ending in /api), module prefix, and action
+        page, the constructed endpoint URL SHALL have a path ending in /api/
+        and query parameters containing NOAUTH, type=module, prefix=<prefix>,
         and page=<action_page>.
         """
         conn = REDCapModuleConnection(
@@ -444,7 +444,7 @@ class TestURLRoundTripProperty:
         assert query_params["page"] == [action_page]
 
     @given(
-        base_url=st.from_regex(r"https?://[a-z]+\.[a-z]+", fullmatch=True),
+        base_url=st.from_regex(r"https?://[a-z]+\.[a-z]+/api", fullmatch=True),
         prefix=st.from_regex(r"[a-z0-9_]{1,64}", fullmatch=True),
         action_page=st.from_regex(r"[a-z0-9_]{1,64}", fullmatch=True),
     )
@@ -549,7 +549,7 @@ class TestTokenInclusionInvariantProperty:
 
         conn = REDCapModuleConnection(
             token=token,
-            url="https://redcap.example.com",
+            url="https://redcap.example.com/api/",
             module_prefix="test_module",
         )
 
@@ -622,7 +622,7 @@ class TestJSONResponsePassThroughProperty:
         """
         conn = REDCapModuleConnection(
             token="test_token",
-            url="https://redcap.example.com",
+            url="https://redcap.example.com/api/",
             module_prefix="test_module",
         )
 
@@ -699,7 +699,7 @@ class TestErrorMessageSecurityProperty:
 
         conn = REDCapModuleConnection(
             token=token,
-            url="https://redcap.example.com",
+            url="https://redcap.example.com/api/",
             module_prefix="test_module",
         )
 
@@ -791,7 +791,7 @@ class TestTextResponsePassThroughProperty:
         """
         conn = REDCapModuleConnection(
             token="test_token",
-            url="https://redcap.example.com",
+            url="https://redcap.example.com/api/",
             module_prefix="test_module",
         )
 
@@ -854,7 +854,7 @@ class TestInvalidJSONDetectionProperty:
 
         conn = REDCapModuleConnection(
             token="test_token",
-            url="https://redcap.example.com",
+            url="https://redcap.example.com/api/",
             module_prefix="test_module",
         )
 
@@ -878,7 +878,7 @@ class TestFactoryConstructionRoundTripProperty:
     """
 
     @given(
-        url=st.from_regex(r"https?://[a-z]+\.[a-z]+", fullmatch=True),
+        url=st.from_regex(r"https?://[a-z]+\.[a-z]+/api", fullmatch=True),
         token=st.text(
             alphabet=_safe_characters,
             min_size=1,
