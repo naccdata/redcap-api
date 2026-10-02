@@ -442,6 +442,41 @@ class REDCapProject:
             data=data, result_format=exp_format, message=message
         )
 
+    def export_survey_link(
+        self,
+        *,
+        record: str,
+        instrument: str,
+        event: Optional[str] = None,
+        repeat_instance: int = 1,
+    ) -> str:
+        """Export the participant-specific survey link for a record.
+
+        Args:
+            record: The record ID
+            instrument: Unique name of the survey instrument
+            event (Optional): Unique event name, required for longitudinal
+                projects
+            repeat_instance (Optional): Repeat instance, defaults to 1
+
+        Returns:
+            The survey link URL
+
+        Raises:
+          REDCapConnectionError if the response has an error.
+        """
+        message = f"exporting survey link for instrument {instrument}"
+        data = {
+            "content": "surveyLink",
+            "record": record,
+            "instrument": instrument,
+            "repeat_instance": str(repeat_instance),
+        }
+        if event:
+            data["event"] = event
+
+        return self.__redcap_con.request_text_value(data=data, message=message).strip()
+
     def export_report(
         self, report_id: str, exp_format: str = "json"
     ) -> List[Dict[str, str]] | str:

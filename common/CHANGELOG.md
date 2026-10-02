@@ -2,6 +2,10 @@
 
 Documentation of release versions of `redcap-api`
 
+## 0.6.0
+
+* Adds `export_survey_link()` method to `REDCapProject` for exporting a record's participant-specific survey link
+
 ## 0.5.1
 
 * Fixes duplicate `/api/` path segment in `REDCapModuleConnection` endpoint URL construction that caused 404 errors
