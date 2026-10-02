@@ -13,7 +13,8 @@ python_distribution(
     sdist=True,
     provides=python_artifact(
         name="redcap-error-checks-import",
-        version="0.2.2",
+        # Placeholder: the release tag (v*) sets the real version at build time.
+        version="0.0.0",
         description="Imports error checks into REDCap",
         author="NACC",
         author_email="nacchelp@uw.edu",

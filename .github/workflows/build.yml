@@ -31,11 +31,20 @@ jobs:
     - name: Set env
       run: echo "VER=${GITHUB_REF#refs/*/}" >> $GITHUB_ENV
     - name: Reset version to match github tag
+      # The git tag is the single source of truth for the released version.
+      # The committed version in BUILD / pyproject.toml is a 0.0.0 placeholder
+      # that is overwritten here at build time for every packaged component.
       run: |
-        sed -i 's|version=.*|version="'$VER'",|g' common/src/python/redcap_api/BUILD
+        # BUILD files: rewrite only the `version="..."` line inside
+        # python_artifact(). Anchoring on the leading whitespace + `version="`
+        # token (not a bare `version=`) means no other field is clobbered.
+        sed -i -E 's|^([[:space:]]*)version="[^"]*"|\1version="'"$VER"'"|' common/src/python/redcap_api/BUILD
         cat common/src/python/redcap_api/BUILD
-        sed -i 's|version=.*|version="'$VER'",|g' tools/redcap_error_checks_import/src/python/redcap_error_checks_import/BUILD
+        sed -i -E 's|^([[:space:]]*)version="[^"]*"|\1version="'"$VER"'"|' tools/redcap_error_checks_import/src/python/redcap_error_checks_import/BUILD
         cat tools/redcap_error_checks_import/src/python/redcap_error_checks_import/BUILD
+        # pyproject.toml: rewrite the `version = "..."` line in the [project] table.
+        sed -i -E 's|^version = "[^"]*"|version = "'"$VER"'"|' common/src/python/redcap_api/pyproject.toml
+        cat common/src/python/redcap_api/pyproject.toml
     - name: Lint
       run: |
         pants lint ::

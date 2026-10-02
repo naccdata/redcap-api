@@ -42,27 +42,37 @@ Distributions are created in the `dist/` directory as both sdist and wheel forma
 
 ## Versioning and Releases
 
-Version numbers must be updated in three places before merging:
+The **git tag is the single source of truth** for the released version. The
+`version` fields committed in `BUILD` and `pyproject.toml` are intentionally
+left at the `0.0.0` placeholder — do not bump them by hand. At build time the
+release workflow overwrites every component's version to match the tag, so a
+committed value would only drift.
 
-1. `CHANGELOG.md` — add a new section for the version with a description of changes
-2. `BUILD` — update the `version` in `python_artifact()` (e.g., `version="0.1.5"`)
-3. `pyproject.toml` — update the `version` field to match
+When preparing a release, update only the changelog:
 
-For example, for the core library these files are:
-- `common/CHANGELOG.md`
+- `CHANGELOG.md` — add a new section for the version with a description of changes
+  (for the core library this is `common/CHANGELOG.md`)
+
+Leave these at `0.0.0`:
 - `common/src/python/redcap_api/BUILD`
 - `common/src/python/redcap_api/pyproject.toml`
+- `tools/redcap_error_checks_import/src/python/redcap_error_checks_import/BUILD`
 
 ### Release Process
 
-The CI build (`.github/workflows/build.yml`) triggers on git tags matching `v*`. At build time, it overrides the `version=` line in BUILD files using `sed` to match the git tag. This means the git tag is the source of truth for the released artifact version.
+The CI build (`.github/workflows/build.yml`) triggers on git tags matching `v*`.
+At build time it rewrites the `version` line in every packaged component's
+`BUILD` and `pyproject.toml` to match the tag (minus the leading `v`), then
+lints, tests, builds, and uploads the packages as a GitHub release.
 
 To release:
-1. Ensure all three version files are updated and merged to main
+1. Ensure the changelog is updated and merged to main
 2. Create and push a git tag: `git tag v0.1.5 && git push origin v0.1.5`
-3. The workflow will lint, test, build, and upload the packages as a GitHub release
+3. The workflow does the rest
 
-Note: The workflow only overrides BUILD file versions, not `pyproject.toml`. Since Pants uses the BUILD file's `python_artifact` version for packaging, this doesn't affect the built artifact. Keep `pyproject.toml` in sync manually for consistency.
+Note: the tag version applies to all packaged components at once (the core
+library and the tools share the tag). Because the committed versions are
+placeholders, there is nothing to keep in sync manually.
 
 ## Before Committing
 

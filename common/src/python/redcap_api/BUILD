@@ -15,7 +15,8 @@ python_distribution(
     sdist=True,
     provides=python_artifact(
         name="redcap-api",
-        version="0.6.0",
+        # Placeholder: the release tag (v*) sets the real version at build time.
+        version="0.0.0",
         description="Library for interacting with the REDCap API",
         author="NACC",
         author_email="nacchelp@uw.edu",
