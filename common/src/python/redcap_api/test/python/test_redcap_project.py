@@ -196,3 +196,51 @@ class TestExportUsersProperties:
         result = project.export_users()
 
         assert result is user_list
+
+
+class TestExportSurveyLink:
+    """Tests for the export_survey_link method."""
+
+    def test_sends_correct_payload(self, project, mock_connection):
+        """Test that the method sends the surveyLink payload."""
+        mock_connection.request_text_value.return_value = "https://r.org/surveys/?s=X"
+
+        project.export_survey_link(record="DAR-1", instrument="dar_survey")
+
+        mock_connection.request_text_value.assert_called_once_with(
+            data={
+                "content": "surveyLink",
+                "record": "DAR-1",
+                "instrument": "dar_survey",
+                "repeat_instance": "1",
+            },
+            message="exporting survey link for instrument dar_survey",
+        )
+
+    def test_includes_event_when_given(self, project, mock_connection):
+        """Test that the event is sent for longitudinal projects."""
+        mock_connection.request_text_value.return_value = "https://r.org/surveys/?s=X"
+
+        project.export_survey_link(
+            record="DAR-1", instrument="dar_survey", event="baseline_arm_1"
+        )
+
+        data = mock_connection.request_text_value.call_args.kwargs["data"]
+        assert data["event"] == "baseline_arm_1"
+
+    def test_strips_whitespace(self, project, mock_connection):
+        """Test that surrounding whitespace in the response is removed."""
+        mock_connection.request_text_value.return_value = "https://r.org/s/?s=X\n"
+
+        result = project.export_survey_link(record="DAR-1", instrument="dar_survey")
+
+        assert result == "https://r.org/s/?s=X"
+
+    def test_propagates_connection_error(self, project, mock_connection):
+        """Test that a REDCap error is raised to the caller."""
+        mock_connection.request_text_value.side_effect = REDCapConnectionError(
+            message="boom"
+        )
+
+        with pytest.raises(REDCapConnectionError):
+            project.export_survey_link(record="DAR-1", instrument="dar_survey")
